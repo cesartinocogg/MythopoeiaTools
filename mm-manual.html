@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mythopoeia Maker · User Manual</title>
+    <link rel="icon" href="favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --void: #05070c;
+            --void-2: #0b101d;
+            --panel: #101728;
+            --panel-2: #162038;
+            --panel-3: #1f2d4e;
+            --line: #223154;
+            --line-soft: #1a2740;
+            --gold: #e2b96f;
+            --gold-glow: rgba(226, 185, 111, .25);
+            --gold-dim: #9c7b46;
+            --teal: #16c79a;
+            --teal-glow: rgba(22, 199, 154, .25);
+            --crimson: #e74c3c;
+            --ink: #d8dee9;
+            --ink-hi: #f8f9fb;
+            --ink-dim: #7f8c9f;
+            --ink-faint: #566179;
+            --f-display: 'Cinzel', serif;
+            --f-body: 'Plus Jakarta Sans', sans-serif;
+            --f-mono: ui-monospace, Consolas, monospace;
+            --radius-s: 8px;
+            --radius-m: 14px;
+            --radius-l: 24px;
+            --shadow-2: 0 12px 40px rgba(0, 0, 0, .5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: radial-gradient(circle at 50% 0%, #151e36 0%, var(--void) 70%);
+            color: var(--ink);
+            font-family: var(--f-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        ::selection { background: var(--gold); color: #1a1305; }
+        ::-webkit-scrollbar { width: 11px; height: 11px; }
+        ::-webkit-scrollbar-track { background: var(--void-2); }
+        ::-webkit-scrollbar-thumb { background: var(--panel-3); border-radius: 8px; border: 2px solid var(--void-2); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        button { font-family: inherit; cursor: pointer; }
+        input, textarea, select { font-family: var(--f-body); }
+        :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+        .topbar {
+            position: sticky; top: 0; z-index: 60;
+            display: flex; align-items: center; gap: 20px;
+            padding: 12px 24px;
+            background: rgba(8, 8, 13, .86);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line-soft);
+            flex-wrap: wrap;
+        }
+        .brand {
+            display: flex; align-items: center; gap: 10px;
+            background: none; border: none; padding: 0;
+            color: var(--ink-hi);
+            font-family: var(--f-display);
+            font-size: 20px; font-weight: 700; letter-spacing: .06em;
+            cursor: default;
+        }
+        .brand-favicon { width: 24px; height: 24px; object-fit: contain; flex: none; }
+
+        .navtabs {
+            display: flex; gap: 4px; flex: 1;
+            background: var(--void-2); padding: 4px;
+            border-radius: 30px; border: 1px solid var(--line);
+            overflow-x: auto;
+        }
+        .navtab {
+            background: none; border: none; color: var(--ink-dim);
+            padding: 8px 18px; border-radius: 24px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all .2s; white-space: nowrap;
+        }
+        .navtab:hover { color: var(--ink-hi); }
+        .navtab.active { background: var(--gold); color: #000; font-weight: 700; box-shadow: 0 0 12px var(--gold-glow); }
+
+        .lang-toggle {
+            background: var(--panel-3);
+            border: 1px solid var(--line);
+            color: var(--gold);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: .2s;
+            flex-shrink: 0;
+        }
+        .lang-toggle:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .workspace {
+            flex: 1;
+            padding: 30px 40px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-family: var(--f-display);
+            font-size: 32px;
+            color: var(--gold);
+            border-bottom: 2px solid var(--line);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+            letter-spacing: .04em;
+        }
+        .subsection-title {
+            font-family: var(--f-display);
+            font-size: 24px;
+            color: var(--gold);
+            margin: 32px 0 16px 0;
+            border-left: 4px solid var(--gold);
+            padding-left: 16px;
+        }
+        .subsection-title-2 {
+            font-family: var(--f-display);
+            font-size: 20px;
+            color: var(--teal);
+            margin: 24px 0 12px 0;
+        }
+        p, li {
+            line-height: 1.7;
+            color: var(--ink);
+            margin-bottom: 14px;
+            font-size: 16px;
+        }
+        ul, ol {
+            margin: 10px 0 20px 28px;
+        }
+        li { margin-bottom: 6px; }
+        .highlight {
+            background: var(--panel-2);
+            border-left: 3px solid var(--gold);
+            padding: 14px 20px;
+            border-radius: var(--radius-s);
+            margin: 16px 0;
+            color: var(--ink-hi);
+        }
+        .highlight strong { color: var(--gold); }
+        .highlight code { color: var(--teal); }
+        code {
+            background: var(--void-2);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.9em;
+            color: var(--teal);
+            border: 1px solid var(--line-soft);
+        }
+        .kbd {
+            display: inline-block;
+            background: var(--panel-3);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.85em;
+            border: 1px solid var(--line);
+            color: var(--gold);
+        }
+        .grid-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 20px;
+            transition: all .2s;
+        }
+        .card:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .card h4 {
+            font-family: var(--f-display);
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .card p { font-size: 14px; margin-bottom: 0; color: var(--ink-dim); }
+
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+        .badge-teal { background: var(--teal); color: #000; }
+        .badge-crimson { background: var(--crimson); color: #fff; }
+
+        .icon-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin: 12px 0;
+        }
+        .icon-list span {
+            font-size: 14px;
+            background: var(--panel-2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--line-soft);
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line-soft);
+            font-size: 14px;
+            color: var(--ink-faint);
+            text-align: center;
+        }
+        .footer-note a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer-note a:hover { text-decoration: underline; }
+
+        @media (max-width: 780px) {
+            .workspace { padding: 20px; }
+            .topbar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .navtabs { order: 2; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; width:100%;">
+            <div class="brand">
+                <img src="favicon.ico" class="brand-favicon" alt="Favicon" onerror="this.style.display='none'" />
+                <span>Mythopoeia Maker · Manual</span>
+            </div>
+            <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">🌐 ES</button>
+        </div>
+
+        <nav class="navtabs" role="tablist">
+            <button class="navtab active" data-tab="overview" onclick="switchTab('overview')">📖 Overview</button>
+            <button class="navtab" data-tab="interface" onclick="switchTab('interface')">🖥️ Interface</button>
+            <button class="navtab" data-tab="passages" onclick="switchTab('passages')">📄 Passages</button>
+            <button class="navtab" data-tab="decisions" onclick="switchTab('decisions')">🔗 Decisions</button>
+            <button class="navtab" data-tab="board" onclick="switchTab('board')">🗺️ Board</button>
+            <button class="navtab" data-tab="export" onclick="switchTab('export')">📤 Export</button>
+            <button class="navtab" data-tab="advanced" onclick="switchTab('advanced')">⚙️ Advanced</button>
+        </nav>
+    </header>
+
+    <main class="workspace">
+
+        <!-- ========== ENGLISH SECTIONS ========== -->
+
+        <section id="section-overview-en" class="section active">
+            <h1 class="section-title">✦ Mythopoeia Maker · User Manual</h1>
+            <p><strong>Mythopoeia Maker</strong> is a visual storytelling tool designed for writers, game masters, and creators of interactive fiction. It combines a <strong>node-based passage editor</strong> with a freeform <strong>visual board</strong>, allowing you to map out branching narratives, connect ideas with decisions, and export your work as a playable visual novel, Markdown, or diagram.</p>
+            <p>Everything is stored in a portable <code>.fmm</code> file, making it easy to save, load, and share your story projects.</p>
+
+            <div class="grid-cols">
+                <div class="card"><h4>📄 Passages</h4><p>Create story nodes with titles, emojis, colors, and rich Markdown content. Each passage is a scene or chapter.</p></div>
+                <div class="card"><h4>🔗 Decisions</h4><p>Add choices that link passages together. Build branching narratives with visual connections on the board.</p></div>
+                <div class="card"><h4>🗺️ Visual Board</h4><p>Drag and arrange passages on an infinite canvas. See the story structure at a glance with connection lines.</p></div>
+                <div class="card"><h4>✨ Stickers & Emojis</h4><p>Decorate your board with draggable emojis and icons. Visualize themes, characters, or locations.</p></div>
+                <div class="card"><h4>🎮 Playable Export</h4><p>Export your story as a standalone HTML visual novel. Test and share your narrative with one click.</p></div>
+                <div class="card"><h4>💾 Native Format</h4><p>Save your project as a compressed <code>.fmm</code> file. All passages, decisions, stickers, and layout are preserved.</p></div>
+            </div>
+
+            <div class="highlight">
+                <strong>💡 Key concept:</strong> Each <strong>passage</strong> is a scene. <strong>Decisions</strong> create branching paths. The <strong>board</strong> visualizes the entire story graph. Use <code>@mentions</code> to link passages directly from the editor, and the board connections update automatically.
+            </div>
+            <p>All data – including emojis and layout – is embedded in the project file. Save, load, and share with a single <code>.fmm</code> file.</p>
+        </section>
+
+        <section id="section-interface-en" class="section">
+            <h1 class="section-title">🖥️ Interface Overview</h1>
+            <p>The interface is divided into three main areas: the <strong>header</strong> (top), the <strong>sidebar</strong> (left), and the <strong>board</strong> (main view). The sidebar can be collapsed with the <code>☰</code> button.</p>
+
+            <h2 class="subsection-title">Header</h2>
+            <ul>
+                <li><strong>☰ Toggle Sidebar</strong> – show/hide the passage list.</li>
+                <li><strong>✦ MYTHOPOEIA</strong> – the brand and title.</li>
+                <li><strong>▶️ Test Play</strong> – opens a popup with the playable visual novel version of your story.</li>
+                <li><strong>➕ New Passage</strong> – creates a new passage and opens the editor panel.</li>
+                <li><strong>📜 Export ▾</strong> – dropdown with export options: Playable HTML, Markdown, Mermaid Diagram, PNG Image.</li>
+                <li><strong>✨ Icons & Emojis</strong> – toggles the emoji palette drawer for adding stickers to the board.</li>
+                <li><strong>💾 Save .FMM</strong> – downloads your project as a compressed <code>.fmm</code> file.</li>
+                <li><strong>📂 Load .FMM</strong> – opens a file picker to load a previously saved project.</li>
+            </ul>
+
+            <h2 class="subsection-title">Sidebar</h2>
+            <ul>
+                <li><strong>📖 Passages</strong> – list of all passages in your project.</li>
+                <li><strong>Count badge</strong> – shows the total number of passages.</li>
+                <li><strong>Passage items</strong> – click to select and center a passage on the board. Double-click to open it in the editor.</li>
+                <li>The <strong>✦</strong> icon marks the starting passage (first in the list).</li>
+            </ul>
+
+            <h2 class="subsection-title">Board</h2>
+            <ul>
+                <li>The <strong>infinite canvas</strong> where passages and stickers are placed.</li>
+                <li>A subtle grid helps with visual alignment.</li>
+                <li><strong>Passage nodes</strong> show the title, emoji, body preview, and decisions.</li>
+                <li><strong>Connection lines</strong> (curves with arrows) link passages via decisions.</li>
+                <li><strong>Zoom & Pan</strong>: scroll to zoom, drag the background to pan.</li>
+                <li><strong>HUD</strong>: bottom-right shows zoom level and a <code>🎯 Center Board</code> button.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🖱️ Navigation:</strong> Scroll to zoom • Drag the background to pan • Click a passage to select it • Double-click a passage to edit • Drag passages to reposition them.
+            </div>
+        </section>
+
+        <section id="section-passages-en" class="section">
+            <h1 class="section-title">📄 Passages</h1>
+            <p>Passages are the building blocks of your story. Each passage represents a scene, chapter, or narrative node.</p>
+
+            <h2 class="subsection-title">Creating a Passage</h2>
+            <ul>
+                <li>Click <strong>➕ New Passage</strong> in the header. A new passage is created and the editor panel opens.</li>
+                <li>Alternatively, use the <strong>dropdown</strong> in the decisions editor to create a new target passage when linking.</li>
+            </ul>
+
+            <h2 class="subsection-title">Editor Panel</h2>
+            <p>The editor panel slides in from the right when you create or double-click a passage.</p>
+            <ul>
+                <li><strong>Emoji selector</strong> – choose an icon for the passage (displayed on the node).</li>
+                <li><strong>Color picker</strong> – sets the border color of the node.</li>
+                <li><strong>Title input</strong> – the passage title. The <strong>slug</strong> (URL-friendly ID) is auto-generated.</li>
+                <li><strong>Content editor</strong> – write your story in Markdown. Supports <code>@mentions</code> for linking.</li>
+                <li><strong>Decisions editor</strong> – add, edit, or delete choices. Each decision links to another passage.</li>
+                <li><strong>Live Preview</strong> – shows rendered Markdown with active links to other passages.</li>
+            </ul>
+
+            <h2 class="subsection-title">Markdown & @Mentions</h2>
+            <p>The content editor supports standard Markdown:</p>
+            <ul>
+                <li><code>**bold**</code> → <strong>bold</strong></li>
+                <li><code>*italic*</code> → <em>italic</em></li>
+                <li><code>@slug</code> – links to another passage by its slug. The slug is auto-generated from the title.</li>
+                <li>While typing <code>@</code>, an autocomplete dropdown appears with matching passages.</li>
+                <li>In the preview, linked passages appear as clickable gold badges.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>💡 Pro tip:</strong> Use <code>@mentions</code> to create hyperlinks between passages directly from the editor. The board connections update automatically when you save.
+            </div>
+
+            <h2 class="subsection-title">Saving & Deleting</h2>
+            <ul>
+                <li><strong>💾 Save</strong> – saves the current passage and closes the panel.</li>
+                <li><strong>🗑️ Delete</strong> – removes the passage. All decisions pointing to it are cleaned up.</li>
+                <li><strong>🎯 Center on Board</strong> – focuses the board on the current passage.</li>
+            </ul>
+        </section>
+
+        <section id="section-decisions-en" class="section">
+            <h1 class="section-title">🔗 Decisions & Connections</h1>
+            <p>Decisions create the branching paths of your narrative. Each decision is a choice that leads to another passage.</p>
+
+            <h2 class="subsection-title">Managing Decisions</h2>
+            <p>In the editor panel, the <strong>Decisions / Choices</strong> section lets you:</p>
+            <ul>
+                <li><strong>+ Add Decision</strong> – adds a new choice row.</li>
+                <li><strong>Decision text</strong> – the text displayed to the player (e.g., "Enter the castle").</li>
+                <li><strong>Target passage</strong> – select a passage from the dropdown. Choose <strong>➕ Create New...</strong> to make a new passage on the fly.</li>
+                <li><strong>✕ Delete</strong> – removes a decision row.</li>
+            </ul>
+
+            <h2 class="subsection-title">Visual Connections</h2>
+            <ul>
+                <li>On the board, decisions are shown as <strong>curved lines</strong> with arrows pointing to the target passage.</li>
+                <li>Each decision appears as a small item inside the source passage node.</li>
+                <li>Hovering over a connection line highlights it in <strong>gold</strong>.</li>
+                <li>When you move a passage, all its connections update automatically.</li>
+            </ul>
+
+            <h2 class="subsection-title">Starting Passage</h2>
+            <p>The <strong>first passage</strong> in the list is marked with a <strong>✦ Starting Passage</strong> badge. This is where the visual novel begins. You can reorder passages by editing the <code>.fmm</code> file, but the tool currently uses the first entry as the start.</p>
+
+            <div class="highlight">
+                <strong>🔗 Link integrity:</strong> If you delete a passage, all decisions that pointed to it are automatically removed from other passages. No broken links remain.
+            </div>
+        </section>
+
+        <section id="section-board-en" class="section">
+            <h1 class="section-title">🗺️ Board Navigation & Customization</h1>
+            <p>The board is your story's visual map. It displays all passages as movable nodes with their connections.</p>
+
+            <h2 class="subsection-title">Navigation</h2>
+            <ul>
+                <li><strong>Zoom</strong> – scroll up/down to zoom in/out. Zoom level is displayed in the bottom-right corner.</li>
+                <li><strong>Pan</strong> – click and drag the empty background to pan around the infinite canvas.</li>
+                <li><strong>Center Board</strong> – click the <code>🎯 Center Board</code> button to auto-fit all passages into view.</li>
+                <li><strong>Center on Passage</strong> – click a passage in the sidebar to center it on the board.</li>
+            </ul>
+
+            <h2 class="subsection-title">Interacting with Passages</h2>
+            <ul>
+                <li><strong>Click</strong> – selects a passage (highlighted with a gold border).</li>
+                <li><strong>Double-click</strong> – opens the passage in the editor panel.</li>
+                <li><strong>Drag</strong> – move a passage anywhere on the board. All connections update in real time.</li>
+                <li>Passage nodes show: emoji, title, body preview (truncated), and a list of decisions.</li>
+            </ul>
+
+            <h2 class="subsection-title">Stickers & Emojis</h2>
+            <ul>
+                <li>Click <strong>✨ Icons & Emojis</strong> in the header to open the palette drawer.</li>
+                <li>Drag any emoji from the palette onto the board to place it as a <strong>sticker</strong>.</li>
+                <li>Stickers are free-floating and can be dragged anywhere. They are saved with the project.</li>
+                <li>Use stickers to mark locations, characters, themes, or add visual flair to your board.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🎯 Quick tip:</strong> Double-click any passage in the sidebar to instantly open it for editing. Click a passage on the board to select it, then use the sidebar entry list for centering.
+            </div>
+        </section>
+
+        <section id="section-export-en" class="section">
+            <h1 class="section-title">📤 Export & Project Management</h1>
+
+            <h2 class="subsection-title">Export Options</h2>
+            <p>Access all exports from the <strong>📜 Export ▾</strong> dropdown in the header.</p>
+            <ul>
+                <li><strong>🎮 Playable Game (.HTML)</strong> – generates a standalone HTML visual novel. Open in any browser, click decisions to progress. All passages, decisions, and formatting are preserved.</li>
+                <li><strong>📝 Markdown (.MD)</strong> – exports the entire story as a single Markdown file with all passages, their content, and decision links (as anchors).</li>
+                <li><strong>🧜‍♂️ Mermaid Diagram</strong> – generates a Mermaid.js graph definition. Paste it into any Mermaid-compatible viewer to see the story structure.</li>
+                <li><strong>🖼️ PNG Image</strong> – captures the current board view as a PNG image. Includes all passages, stickers, and connection lines.</li>
+            </ul>
+
+            <h2 class="subsection-title">Test Play</h2>
+            <p>The <strong>▶️ Test Play</strong> button opens a popup window with the playable visual novel version of your story. This is a quick way to playtest your narrative without exporting. The popup uses the same engine as the HTML export.</p>
+
+            <h2 class="subsection-title">Project File (.fmm)</h2>
+            <p>The native format is a JSON file with the <code>.fmm</code> extension. It stores:</p>
+            <ul>
+                <li>All passages (id, title, slug, emoji, color, body, position, decisions).</li>
+                <li>All stickers (id, emoji, position).</li>
+                <li>Layout information (passage positions).</li>
+            </ul>
+            <p>Because everything is stored in plain JSON, it's easy to version control or edit manually.</p>
+
+            <h2 class="subsection-title">Save & Load</h2>
+            <ul>
+                <li><strong>💾 Save .FMM</strong> – downloads the current project as a <code>.fmm</code> file.</li>
+                <li><strong>📂 Load .FMM</strong> – opens a file picker to load a previously saved project. The current project is replaced.</li>
+            </ul>
+            <p>Data is also saved automatically to your browser's <strong>localStorage</strong> between sessions. Your work persists even if you close the tab.</p>
+
+            <div class="highlight">
+                <strong>🔄 Auto-save:</strong> Your project is automatically saved to localStorage. The <code>.fmm</code> export is a portable backup and sharing format.
+            </div>
+        </section>
+
+        <section id="section-advanced-en" class="section">
+            <h1 class="section-title">⚙️ Advanced Features</h1>
+
+            <h2 class="subsection-title">@Mention Autocomplete</h2>
+            <p>The content editor includes an intelligent autocomplete system:</p>
+            <ul>
+                <li>Type <code>@</code> followed by a few letters to see matching passages.</li>
+                <li>Use <span class="kbd">↑</span> / <span class="kbd">↓</span> to navigate the list.</li>
+                <li>Press <span class="kbd">Enter</span> or <span class="kbd">Tab</span> to insert the selected mention.</li>
+                <li>Press <span class="kbd">Escape</span> to close the dropdown.</li>
+                <li>The link is inserted as <code>@slug</code>, which renders as a clickable link in the preview.</li>
+            </ul>
+
+            <h2 class="subsection-title">Keyboard Shortcuts</h2>
+            <ul>
+                <li><span class="kbd">Scroll</span> – zoom on the board.</li>
+                <li><span class="kbd">Drag background</span> – pan the board.</li>
+                <li><span class="kbd">Double-click</span> passage – open editor.</li>
+                <li><span class="kbd">Enter</span> (in editor) – when typing a mention, selects it.</li>
+                <li><span class="kbd">Escape</span> – closes the mention dropdown or the editor panel.</li>
+            </ul>
+
+            <h2 class="subsection-title">Stickers & Visual Mapping</h2>
+            <ul>
+                <li>Stickers are independent of passages and can be used to mark regions, themes, characters, or locations.</li>
+                <li>They are stored with their position and persist across saves.</li>
+                <li>Drag stickers freely – they don't snap to any grid.</li>
+            </ul>
+
+            <h2 class="subsection-title">Story Structure Tips</h2>
+            <ul>
+                <li>Keep your starting passage simple – it sets the tone for the entire experience.</li>
+                <li>Use decisions to create meaningful choices, not just "continue" buttons.</li>
+                <li>Use <code>@mentions</code> to create hyperlinks within text for non-linear reading.</li>
+                <li>Use the board to spot disconnected passages or bottlenecks in your narrative.</li>
+                <li>Test Play often – it's the fastest way to experience your story from a reader's perspective.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🧪 Experimental:</strong> The <code>.fmm</code> format is plain JSON. You can edit it manually to reorder passages (the first is the start) or adjust positions with precision.
+            </div>
+        </section>
+
+        <!-- ========== SPANISH SECTIONS ========== -->
+
+        <section id="section-overview-es" class="section">
+            <h1 class="section-title">✦ Mythopoeia Maker · Manual de Usuario</h1>
+            <p><strong>Mythopoeia Maker</strong> es una herramienta de narración visual diseñada para escritores, directores de juego y creadores de ficción interactiva. Combina un <strong>editor de pasajes basado en nodos</strong> con un <strong>tablero visual</strong> de forma libre, permitiéndote mapear narrativas ramificadas, conectar ideas con decisiones y exportar tu trabajo como una novela visual jugable, Markdown o diagrama.</p>
+            <p>Todo se almacena en un archivo <code>.fmm</code> portátil, lo que facilita guardar, cargar y compartir tus proyectos narrativos.</p>
+
+            <div class="grid-cols">
+                <div class="card"><h4>📄 Pasajes</h4><p>Crea nodos de historia con títulos, emojis, colores y contenido Markdown enriquecido. Cada pasaje es una escena o capítulo.</p></div>
+                <div class="card"><h4>🔗 Decisiones</h4><p>Añade opciones que enlazan pasajes. Construye narrativas ramificadas con conexiones visuales en el tablero.</p></div>
+                <div class="card"><h4>🗺️ Tablero Visual</h4><p>Arrastra y organiza pasajes en un lienzo infinito. Visualiza la estructura de la historia de un vistazo con líneas de conexión.</p></div>
+                <div class="card"><h4>✨ Pegatinas & Emojis</h4><p>Decora tu tablero con emojis e iconos arrastrables. Visualiza temas, personajes o ubicaciones.</p></div>
+                <div class="card"><h4>🎮 Exportación Jugable</h4><p>Exporta tu historia como una novela visual HTML independiente. Prueba y comparte tu narrativa con un clic.</p></div>
+                <div class="card"><h4>💾 Formato Nativo</h4><p>Guarda tu proyecto como un archivo <code>.fmm</code> comprimido. Todos los pasajes, decisiones, pegatinas y diseño se conservan.</p></div>
+            </div>
+
+            <div class="highlight">
+                <strong>💡 Concepto clave:</strong> Cada <strong>pasaje</strong> es una escena. Las <strong>decisiones</strong> crean caminos ramificados. El <strong>tablero</strong> visualiza todo el grafo de la historia. Usa <code>@menciones</code> para enlazar pasajes directamente desde el editor, y las conexiones del tablero se actualizan automáticamente.
+            </div>
+            <p>Todos los datos – incluidos emojis y diseño – están incrustados en el archivo del proyecto. Guarda, carga y comparte con un solo archivo <code>.fmm</code>.</p>
+        </section>
+
+        <section id="section-interface-es" class="section">
+            <h1 class="section-title">🖥️ Visión general de la interfaz</h1>
+            <p>La interfaz se divide en tres áreas principales: el <strong>encabezado</strong> (arriba), la <strong>barra lateral</strong> (izquierda) y el <strong>tablero</strong> (vista principal). La barra lateral se puede ocultar con el botón <code>☰</code>.</p>
+
+            <h2 class="subsection-title">Encabezado</h2>
+            <ul>
+                <li><strong>☰ Alternar barra lateral</strong> – muestra/oculta la lista de pasajes.</li>
+                <li><strong>✦ MYTHOPOEIA</strong> – la marca y el título.</li>
+                <li><strong>▶️ Probar</strong> – abre una ventana emergente con la versión jugable de tu historia.</li>
+                <li><strong>➕ Nuevo Pasaje</strong> – crea un nuevo pasaje y abre el panel del editor.</li>
+                <li><strong>📜 Exportar ▾</strong> – menú desplegable con opciones: HTML jugable, Markdown, Diagrama Mermaid, PNG.</li>
+                <li><strong>✨ Iconos & Emojis</strong> – alterna el cajón de emojis para añadir pegatinas al tablero.</li>
+                <li><strong>💾 Guardar .FMM</strong> – descarga tu proyecto como un archivo <code>.fmm</code> comprimido.</li>
+                <li><strong>📂 Cargar .FMM</strong> – abre un selector de archivos para cargar un proyecto guardado.</li>
+            </ul>
+
+            <h2 class="subsection-title">Barra lateral</h2>
+            <ul>
+                <li><strong>📖 Pasajes</strong> – lista de todos los pasajes de tu proyecto.</li>
+                <li><strong>Contador</strong> – muestra el número total de pasajes.</li>
+                <li><strong>Elementos de pasaje</strong> – haz clic para seleccionar y centrar un pasaje en el tablero. Haz doble clic para abrirlo en el editor.</li>
+                <li>El icono <strong>✦</strong> marca el pasaje de inicio (el primero de la lista).</li>
+            </ul>
+
+            <h2 class="subsection-title">Tablero</h2>
+            <ul>
+                <li>El <strong>lienzo infinito</strong> donde se colocan pasajes y pegatinas.</li>
+                <li>Una cuadrícula sutil ayuda con la alineación visual.</li>
+                <li>Los <strong>nodos de pasaje</strong> muestran el título, emoji, vista previa del cuerpo y las decisiones.</li>
+                <li>Las <strong>líneas de conexión</strong> (curvas con flechas) enlazan pasajes a través de decisiones.</li>
+                <li><strong>Zoom & Panorámica</strong>: desplázate para hacer zoom, arrastra el fondo para moverte.</li>
+                <li><strong>HUD</strong>: en la esquina inferior derecha muestra el nivel de zoom y un botón <code>🎯 Centrar tablero</code>.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🖱️ Navegación:</strong> Desplázate para hacer zoom • Arrastra el fondo para moverte • Haz clic en un pasaje para seleccionarlo • Haz doble clic en un pasaje para editarlo • Arrastra los pasajes para reposicionarlos.
+            </div>
+        </section>
+
+        <section id="section-passages-es" class="section">
+            <h1 class="section-title">📄 Pasajes</h1>
+            <p>Los pasajes son los bloques de construcción de tu historia. Cada pasaje representa una escena, capítulo o nodo narrativo.</p>
+
+            <h2 class="subsection-title">Crear un pasaje</h2>
+            <ul>
+                <li>Haz clic en <strong>➕ Nuevo Pasaje</strong> en el encabezado. Se crea un nuevo pasaje y se abre el panel del editor.</li>
+                <li>Alternativamente, usa el <strong>menú desplegable</strong> en el editor de decisiones para crear un nuevo pasaje de destino al enlazar.</li>
+            </ul>
+
+            <h2 class="subsection-title">Panel del editor</h2>
+            <p>El panel del editor se desliza desde la derecha cuando creas o haces doble clic en un pasaje.</p>
+            <ul>
+                <li><strong>Selector de emoji</strong> – elige un icono para el pasaje (se muestra en el nodo).</li>
+                <li><strong>Selector de color</strong> – establece el color del borde del nodo.</li>
+                <li><strong>Campo de título</strong> – el título del pasaje. El <strong>slug</strong> (ID amigable para URL) se genera automáticamente.</li>
+                <li><strong>Editor de contenido</strong> – escribe tu historia en Markdown. Admite <code>@menciones</code> para enlazar.</li>
+                <li><strong>Editor de decisiones</strong> – añade, edita o elimina opciones. Cada decisión enlaza a otro pasaje.</li>
+                <li><strong>Vista previa en vivo</strong> – muestra el Markdown renderizado con enlaces activos a otros pasajes.</li>
+            </ul>
+
+            <h2 class="subsection-title">Markdown & @Menciones</h2>
+            <p>El editor de contenido admite Markdown estándar:</p>
+            <ul>
+                <li><code>**negrita**</code> → <strong>negrita</strong></li>
+                <li><code>*cursiva*</code> → <em>cursiva</em></li>
+                <li><code>@slug</code> – enlaza a otro pasaje por su slug. El slug se genera automáticamente a partir del título.</li>
+                <li>Mientras escribes <code>@</code>, aparece un menú desplegable con los pasajes coincidentes.</li>
+                <li>En la vista previa, los pasajes enlazados aparecen como insignias doradas cliqueables.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>💡 Consejo profesional:</strong> Usa <code>@menciones</code> para crear hipervínculos entre pasajes directamente desde el editor. Las conexiones del tablero se actualizan automáticamente al guardar.
+            </div>
+
+            <h2 class="subsection-title">Guardar y eliminar</h2>
+            <ul>
+                <li><strong>💾 Guardar</strong> – guarda el pasaje actual y cierra el panel.</li>
+                <li><strong>🗑️ Eliminar</strong> – elimina el pasaje. Todas las decisiones que apuntaban a él se limpian.</li>
+                <li><strong>🎯 Centrar en tablero</strong> – enfoca el tablero en el pasaje actual.</li>
+            </ul>
+        </section>
+
+        <section id="section-decisions-es" class="section">
+            <h1 class="section-title">🔗 Decisiones & Conexiones</h1>
+            <p>Las decisiones crean los caminos ramificados de tu narrativa. Cada decisión es una opción que lleva a otro pasaje.</p>
+
+            <h2 class="subsection-title">Gestionar decisiones</h2>
+            <p>En el panel del editor, la sección <strong>Decisiones / Opciones</strong> te permite:</p>
+            <ul>
+                <li><strong>+ Añadir Decisión</strong> – añade una nueva fila de opción.</li>
+                <li><strong>Texto de decisión</strong> – el texto que se muestra al jugador (ej. "Entrar al castillo").</li>
+                <li><strong>Pasaje de destino</strong> – selecciona un pasaje del desplegable. Elige <strong>➕ Crear Nuevo...</strong> para crear un nuevo pasaje sobre la marcha.</li>
+                <li><strong>✕ Eliminar</strong> – elimina una fila de decisión.</li>
+            </ul>
+
+            <h2 class="subsection-title">Conexiones visuales</h2>
+            <ul>
+                <li>En el tablero, las decisiones se muestran como <strong>líneas curvas</strong> con flechas que apuntan al pasaje de destino.</li>
+                <li>Cada decisión aparece como un elemento pequeño dentro del nodo del pasaje origen.</li>
+                <li>Al pasar el cursor sobre una línea de conexión, se resalta en <strong>dorado</strong>.</li>
+                <li>Cuando mueves un pasaje, todas sus conexiones se actualizan automáticamente.</li>
+            </ul>
+
+            <h2 class="subsection-title">Pasaje de inicio</h2>
+            <p>El <strong>primer pasaje</strong> de la lista está marcado con una insignia <strong>✦ Pasaje de inicio</strong>. Es donde comienza la novela visual. Puedes reordenar los pasajes editando el archivo <code>.fmm</code>, pero la herramienta utiliza la primera entrada como inicio.</p>
+
+            <div class="highlight">
+                <strong>🔗 Integridad de enlaces:</strong> Si eliminas un pasaje, todas las decisiones que apuntaban a él se eliminan automáticamente de otros pasajes. No quedan enlaces rotos.
+            </div>
+        </section>
+
+        <section id="section-board-es" class="section">
+            <h1 class="section-title">🗺️ Navegación y personalización del tablero</h1>
+            <p>El tablero es el mapa visual de tu historia. Muestra todos los pasajes como nodos móviles con sus conexiones.</p>
+
+            <h2 class="subsection-title">Navegación</h2>
+            <ul>
+                <li><strong>Zoom</strong> – desplázate hacia arriba/abajo para acercar/alejar. El nivel de zoom se muestra en la esquina inferior derecha.</li>
+                <li><strong>Panorámica</strong> – haz clic y arrastra el fondo vacío para moverte por el lienzo infinito.</li>
+                <li><strong>Centrar tablero</strong> – haz clic en el botón <code>🎯 Centrar tablero</code> para ajustar automáticamente todos los pasajes a la vista.</li>
+                <li><strong>Centrar en pasaje</strong> – haz clic en un pasaje en la barra lateral para centrarlo en el tablero.</li>
+            </ul>
+
+            <h2 class="subsection-title">Interactuar con los pasajes</h2>
+            <ul>
+                <li><strong>Clic</strong> – selecciona un pasaje (resaltado con un borde dorado).</li>
+                <li><strong>Doble clic</strong> – abre el pasaje en el panel del editor.</li>
+                <li><strong>Arrastrar</strong> – mueve un pasaje a cualquier lugar del tablero. Todas las conexiones se actualizan en tiempo real.</li>
+                <li>Los nodos de pasaje muestran: emoji, título, vista previa del cuerpo (truncada) y una lista de decisiones.</li>
+            </ul>
+
+            <h2 class="subsection-title">Pegatinas & Emojis</h2>
+            <ul>
+                <li>Haz clic en <strong>✨ Iconos & Emojis</strong> en el encabezado para abrir el cajón de la paleta.</li>
+                <li>Arrastra cualquier emoji de la paleta al tablero para colocarlo como <strong>pegatina</strong>.</li>
+                <li>Las pegatinas flotan libremente y se pueden arrastrar a cualquier lugar. Se guardan con el proyecto.</li>
+                <li>Usa pegatinas para marcar ubicaciones, personajes, temas o añadir estilo visual a tu tablero.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🎯 Consejo rápido:</strong> Haz doble clic en cualquier pasaje de la barra lateral para abrirlo al instante para editar. Haz clic en un pasaje del tablero para seleccionarlo y luego usa la lista de la barra lateral para centrarlo.
+            </div>
+        </section>
+
+        <section id="section-export-es" class="section">
+            <h1 class="section-title">📤 Exportación y gestión de proyectos</h1>
+
+            <h2 class="subsection-title">Opciones de exportación</h2>
+            <p>Accede a todas las exportaciones desde el menú desplegable <strong>📜 Exportar ▾</strong> en el encabezado.</p>
+            <ul>
+                <li><strong>🎮 Juego jugable (.HTML)</strong> – genera una novela visual HTML independiente. Abre en cualquier navegador, haz clic en las decisiones para avanzar. Todos los pasajes, decisiones y formato se conservan.</li>
+                <li><strong>📝 Markdown (.MD)</strong> – exporta toda la historia como un único archivo Markdown con todos los pasajes, su contenido y enlaces de decisiones (como anclas).</li>
+                <li><strong>🧜‍♂️ Diagrama Mermaid</strong> – genera una definición de gráfico Mermaid.js. Pégalo en cualquier visor compatible con Mermaid para ver la estructura de la historia.</li>
+                <li><strong>🖼️ Imagen PNG</strong> – captura la vista actual del tablero como una imagen PNG. Incluye todos los pasajes, pegatinas y líneas de conexión.</li>
+            </ul>
+
+            <h2 class="subsection-title">Probar</h2>
+            <p>El botón <strong>▶️ Probar</strong> abre una ventana emergente con la versión jugable de tu historia. Es una forma rápida de probar tu narrativa sin exportar. La ventana emergente utiliza el mismo motor que la exportación HTML.</p>
+
+            <h2 class="subsection-title">Archivo de proyecto (.fmm)</h2>
+            <p>El formato nativo es un archivo JSON con extensión <code>.fmm</code>. Almacena:</p>
+            <ul>
+                <li>Todos los pasajes (id, título, slug, emoji, color, cuerpo, posición, decisiones).</li>
+                <li>Todas las pegatinas (id, emoji, posición).</li>
+                <li>Información de diseño (posiciones de los pasajes).</li>
+            </ul>
+            <p>Como todo se almacena en JSON plano, es fácil controlar versiones o editar manualmente.</p>
+
+            <h2 class="subsection-title">Guardar y cargar</h2>
+            <ul>
+                <li><strong>💾 Guardar .FMM</strong> – descarga el proyecto actual como un archivo <code>.fmm</code>.</li>
+                <li><strong>📂 Cargar .FMM</strong> – abre un selector de archivos para cargar un proyecto guardado. El proyecto actual se reemplaza.</li>
+            </ul>
+            <p>Los datos también se guardan automáticamente en el <strong>localStorage</strong> del navegador entre sesiones. Tu trabajo persiste incluso si cierras la pestaña.</p>
+
+            <div class="highlight">
+                <strong>🔄 Guardado automático:</strong> Tu proyecto se guarda automáticamente en localStorage. La exportación <code>.fmm</code> es una copia de seguridad portátil y un formato para compartir.
+            </div>
+        </section>
+
+        <section id="section-advanced-es" class="section">
+            <h1 class="section-title">⚙️ Funciones avanzadas</h1>
+
+            <h2 class="subsection-title">Autocompletado de @menciones</h2>
+            <p>El editor de contenido incluye un sistema de autocompletado inteligente:</p>
+            <ul>
+                <li>Escribe <code>@</code> seguido de unas pocas letras para ver los pasajes coincidentes.</li>
+                <li>Usa <span class="kbd">↑</span> / <span class="kbd">↓</span> para navegar por la lista.</li>
+                <li>Presiona <span class="kbd">Enter</span> o <span class="kbd">Tab</span> para insertar la mención seleccionada.</li>
+                <li>Presiona <span class="kbd">Escape</span> para cerrar el menú desplegable.</li>
+                <li>El enlace se inserta como <code>@slug</code>, que se renderiza como un enlace cliqueable en la vista previa.</li>
+            </ul>
+
+            <h2 class="subsection-title">Atajos de teclado</h2>
+            <ul>
+                <li><span class="kbd">Scroll</span> – zoom en el tablero.</li>
+                <li><span class="kbd">Arrastrar fondo</span> – mover el tablero.</li>
+                <li><span class="kbd">Doble clic</span> en pasaje – abrir editor.</li>
+                <li><span class="kbd">Enter</span> (en el editor) – al escribir una mención, la selecciona.</li>
+                <li><span class="kbd">Escape</span> – cierra el menú desplegable de menciones o el panel del editor.</li>
+            </ul>
+
+            <h2 class="subsection-title">Pegatinas & mapeo visual</h2>
+            <ul>
+                <li>Las pegatinas son independientes de los pasajes y se pueden usar para marcar regiones, temas, personajes o ubicaciones.</li>
+                <li>Se almacenan con su posición y persisten entre guardados.</li>
+                <li>Arrastra las pegatinas libremente – no se ajustan a ninguna cuadrícula.</li>
+            </ul>
+
+            <h2 class="subsection-title">Consejos de estructura narrativa</h2>
+            <ul>
+                <li>Mantén tu pasaje de inicio simple – establece el tono de toda la experiencia.</li>
+                <li>Usa decisiones para crear opciones significativas, no solo botones de "continuar".</li>
+                <li>Usa <code>@menciones</code> para crear hipervínculos dentro del texto para lectura no lineal.</li>
+                <li>Usa el tablero para detectar pasajes desconectados o cuellos de botella en tu narrativa.</li>
+                <li>Prueba a menudo – es la forma más rápida de experimentar tu historia desde la perspectiva del lector.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🧪 Experimental:</strong> El formato <code>.fmm</code> es JSON plano. Puedes editarlo manualmente para reordenar pasajes (el primero es el inicio) o ajustar posiciones con precisión.
+            </div>
+        </section>
+
+        <div class="footer-note">
+            Created by Cesar Tinoco, support him on Patreon <a href="https://patreon.com/c/CesarTinocoGG" target="_blank" rel="noopener noreferrer">patreon.com/c/CesarTinocoGG</a> · Mythopoeia Maker v2.0
+        </div>
+
+    </main>
+
+    <script>
+        const tabTranslations = {
+            en: {
+                overview: '📖 Overview',
+                interface: '🖥️ Interface',
+                passages: '📄 Passages',
+                decisions: '🔗 Decisions',
+                board: '🗺️ Board',
+                export: '📤 Export',
+                advanced: '⚙️ Advanced'
+            },
+            es: {
+                overview: '📖 Inicio',
+                interface: '🖥️ Interfaz',
+                passages: '📄 Pasajes',
+                decisions: '🔗 Decisiones',
+                board: '🗺️ Tablero',
+                export: '📤 Exportar',
+                advanced: '⚙️ Avanzado'
+            }
+        };
+
+        let currentLang = 'en';
+        let currentTab = 'overview';
+        const langToggle = document.getElementById('lang-toggle');
+        const navTabs = document.querySelectorAll('.navtab');
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            updateView();
+        }
+
+        function updateView() {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            const targetId = 'section-' + currentTab + '-' + currentLang;
+            const target = document.getElementById(targetId);
+            if (target) target.classList.add('active');
+
+            navTabs.forEach(btn => {
+                const isActive = btn.getAttribute('data-tab') === currentTab;
+                btn.classList.toggle('active', isActive);
+            });
+        }
+
+        function updateNavTexts(lang) {
+            navTabs.forEach(btn => {
+                const tab = btn.getAttribute('data-tab');
+                btn.textContent = tabTranslations[lang][tab] || tab;
+            });
+        }
+
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            langToggle.textContent = lang === 'en' ? '🌐 ES' : '🌐 EN';
+            updateNavTexts(lang);
+            updateView();
+        }
+
+        function toggleLang() {
+            setLanguage(currentLang === 'en' ? 'es' : 'en');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentLang = 'en';
+            currentTab = 'overview';
+            langToggle.textContent = '🌐 ES';
+            updateNavTexts('en');
+            updateView();
+        });
+    </script>
+
+</body>
+</html>

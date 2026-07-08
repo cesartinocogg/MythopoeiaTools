@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Map for Mythopoeia · User Manual</title>
+    <link rel="icon" href="favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --void: #05070c;
+            --void-2: #0b101d;
+            --panel: #101728;
+            --panel-2: #162038;
+            --panel-3: #1f2d4e;
+            --line: #223154;
+            --line-soft: #1a2740;
+            --gold: #e2b96f;
+            --gold-glow: rgba(226, 185, 111, .25);
+            --gold-dim: #9c7b46;
+            --teal: #16c79a;
+            --teal-glow: rgba(22, 199, 154, .25);
+            --crimson: #e74c3c;
+            --ink: #d8dee9;
+            --ink-hi: #f8f9fb;
+            --ink-dim: #7f8c9f;
+            --ink-faint: #566179;
+            --f-display: 'Cinzel', serif;
+            --f-body: 'Plus Jakarta Sans', sans-serif;
+            --f-mono: ui-monospace, Consolas, monospace;
+            --radius-s: 8px;
+            --radius-m: 14px;
+            --radius-l: 24px;
+            --shadow-2: 0 12px 40px rgba(0, 0, 0, .5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: radial-gradient(circle at 50% 0%, #151e36 0%, var(--void) 70%);
+            color: var(--ink);
+            font-family: var(--f-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        ::selection { background: var(--gold); color: #1a1305; }
+        ::-webkit-scrollbar { width: 11px; height: 11px; }
+        ::-webkit-scrollbar-track { background: var(--void-2); }
+        ::-webkit-scrollbar-thumb { background: var(--panel-3); border-radius: 8px; border: 2px solid var(--void-2); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        button { font-family: inherit; cursor: pointer; }
+        input, textarea, select { font-family: var(--f-body); }
+        :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+        .topbar {
+            position: sticky; top: 0; z-index: 60;
+            display: flex; align-items: center; gap: 20px;
+            padding: 12px 24px;
+            background: rgba(8, 8, 13, .86);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line-soft);
+            flex-wrap: wrap;
+        }
+        .brand {
+            display: flex; align-items: center; gap: 10px;
+            background: none; border: none; padding: 0;
+            color: var(--ink-hi);
+            font-family: var(--f-display);
+            font-size: 20px; font-weight: 700; letter-spacing: .06em;
+            cursor: default;
+        }
+        .brand-favicon { width: 24px; height: 24px; object-fit: contain; flex: none; }
+
+        .navtabs {
+            display: flex; gap: 4px; flex: 1;
+            background: var(--void-2); padding: 4px;
+            border-radius: 30px; border: 1px solid var(--line);
+            overflow-x: auto;
+        }
+        .navtab {
+            background: none; border: none; color: var(--ink-dim);
+            padding: 8px 18px; border-radius: 24px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all .2s; white-space: nowrap;
+        }
+        .navtab:hover { color: var(--ink-hi); }
+        .navtab.active { background: var(--gold); color: #000; font-weight: 700; box-shadow: 0 0 12px var(--gold-glow); }
+
+        .lang-toggle {
+            background: var(--panel-3);
+            border: 1px solid var(--line);
+            color: var(--gold);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: .2s;
+            flex-shrink: 0;
+        }
+        .lang-toggle:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .workspace {
+            flex: 1;
+            padding: 30px 40px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-family: var(--f-display);
+            font-size: 32px;
+            color: var(--gold);
+            border-bottom: 2px solid var(--line);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+            letter-spacing: .04em;
+        }
+        .subsection-title {
+            font-family: var(--f-display);
+            font-size: 24px;
+            color: var(--gold);
+            margin: 32px 0 16px 0;
+            border-left: 4px solid var(--gold);
+            padding-left: 16px;
+        }
+        .subsection-title-2 {
+            font-family: var(--f-display);
+            font-size: 20px;
+            color: var(--teal);
+            margin: 24px 0 12px 0;
+        }
+        p, li {
+            line-height: 1.7;
+            color: var(--ink);
+            margin-bottom: 14px;
+            font-size: 16px;
+        }
+        ul, ol {
+            margin: 10px 0 20px 28px;
+        }
+        li { margin-bottom: 6px; }
+        .highlight {
+            background: var(--panel-2);
+            border-left: 3px solid var(--gold);
+            padding: 14px 20px;
+            border-radius: var(--radius-s);
+            margin: 16px 0;
+            color: var(--ink-hi);
+        }
+        .highlight strong { color: var(--gold); }
+        code {
+            background: var(--void-2);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.9em;
+            color: var(--teal);
+            border: 1px solid var(--line-soft);
+        }
+        .kbd {
+            display: inline-block;
+            background: var(--panel-3);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.85em;
+            border: 1px solid var(--line);
+            color: var(--gold);
+        }
+        .grid-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 20px;
+            transition: all .2s;
+        }
+        .card:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .card h4 {
+            font-family: var(--f-display);
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .card p { font-size: 14px; margin-bottom: 0; color: var(--ink-dim); }
+
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line-soft);
+            font-size: 14px;
+            color: var(--ink-faint);
+            text-align: center;
+        }
+        .footer-note a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer-note a:hover { text-decoration: underline; }
+
+        @media (max-width: 780px) {
+            .workspace { padding: 20px; }
+            .topbar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .navtabs { order: 2; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; width:100%;">
+            <div class="brand">
+                <img src="favicon.ico" class="brand-favicon" alt="Favicon" onerror="this.style.display='none'" />
+                <span>Map for Mythopoeia · Manual</span>
+            </div>
+            <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">🌐 ES</button>
+        </div>
+
+        <nav class="navtabs" role="tablist">
+            <button class="navtab active" data-tab="overview" onclick="switchTab('overview')">📖 Overview</button>
+            <button class="navtab" data-tab="interface" onclick="switchTab('interface')">🖥️ Interface</button>
+            <button class="navtab" data-tab="tools" onclick="switchTab('tools')">🛠️ Tools</button>
+            <button class="navtab" data-tab="layers" onclick="switchTab('layers')">📚 Layers</button>
+            <button class="navtab" data-tab="export" onclick="switchTab('export')">📤 Export</button>
+            <button class="navtab" data-tab="advanced" onclick="switchTab('advanced')">⚙️ Advanced</button>
+        </nav>
+    </header>
+
+    <main class="workspace">
+
+        <!-- ========== ENGLISH SECTIONS ========== -->
+
+        <section id="section-overview-en" class="section active">
+            <h1 class="section-title">🗺️ Map for Mythopoeia · User Manual</h1>
+            <p><strong>Map for Mythopoeia</strong> is a dedicated cartography tool designed for worldbuilders, GMs, and creatives. It provides a full-featured canvas for drawing, layering, annotating, and exporting high-quality maps. Built on <strong>Fabric.js</strong>, it delivers a smooth, interactive experience with support for brushes, images, text labels, and a complete layer system.</p>
+            <p>Everything is stored in a portable <code>.fmf</code> file, making it easy to save, load, and share your projects.</p>
+
+            <div class="grid-cols">
+                <div class="card"><h4>📐 Map Size</h4><p>Choose from 1K, 2K, or 4K resolution – ideal for everything from quick sketches to detailed regional maps.</p></div>
+                <div class="card"><h4>🖌️ Drawing Tools</h4><p>Brush, eraser, image placement, and text labels. Full color control and adjustable brush sizes.</p></div>
+                <div class="card"><h4>📚 Layer System</h4><p>Organise your work with multiple layers. Toggle visibility, reorder, and edit independently.</p></div>
+                <div class="card"><h4>🖼️ Image Gallery</h4><p>Upload and manage reference images. Drag and drop or double-click to place them on the canvas.</p></div>
+                <div class="card"><h4>📤 Export Options</h4><p>Export your map as PNG, JPG, or SVG – perfect for printing, sharing, or further editing.</p></div>
+                <div class="card"><h4>💾 Native Format</h4><p>Save your project as a compressed <code>.fmf</code> file. All layers, objects, and images are preserved.</p></div>
+            </div>
+
+            <div class="highlight">
+                <strong>💡 Key concept:</strong> The canvas is your map. Use layers to separate elements (terrain, landmarks, labels, notes). The active layer receives all new objects. The property panel lets you tweak selected items without leaving the workspace.
+            </div>
+            <p>All images and data are embedded in the project file. Save, load, and share with a single <code>.fmf</code> file.</p>
+        </section>
+
+        <section id="section-interface-en" class="section">
+            <h1 class="section-title">🖥️ Interface Overview</h1>
+            <p>The interface is divided into a <strong>sidebar</strong> (left) and the <strong>canvas</strong> (main view). The sidebar can be collapsed with the <code>☰</code> button.</p>
+
+            <h2 class="subsection-title">Sidebar</h2>
+            <ul>
+                <li><strong>Map Size</strong> – switch between 1K, 2K, or 4K resolution. Changing size clears the canvas (confirmation required).</li>
+                <li><strong>Tools</strong> – Select, Brush, Eraser, Image, Text, and Color Picker (Dripper).</li>
+                <li><strong>Brush Options</strong> – adjust size (4–120px) and color for brush strokes.</li>
+                <li><strong>Image Gallery</strong> – upload images, drag them onto the canvas, or double-click to place them at the centre.</li>
+                <li><strong>Text Tool</strong> – enter a label and click <code>Add</code> to place it on the active layer.</li>
+                <li><strong>Layers</strong> – create, delete, toggle visibility, and set the active layer.</li>
+                <li><strong>Properties Panel</strong> – appears when an object is selected. Edit name, dimensions, color, or text content.</li>
+                <li><strong>Export</strong> – download the current map as PNG, JPG, or SVG.</li>
+                <li><strong>Project</strong> – save your work as <code>.fmf</code> or load a previous project.</li>
+                <li><strong>Activity Log</strong> – shows recent actions for reference.</li>
+            </ul>
+
+            <h2 class="subsection-title">Canvas</h2>
+            <ul>
+                <li>The canvas displays your map at the chosen resolution.</li>
+                <li>A gold border marks the map boundary – objects outside this border are clipped.</li>
+                <li><strong>Zoom</strong>: scroll to zoom in/out. The zoom level is displayed in the bottom-right corner.</li>
+                <li><strong>Pan</strong>: hold <span class="kbd">Alt</span> and drag to pan around the canvas.</li>
+                <li>Controls: <code>＋</code> (zoom in), <code>－</code> (zoom out), <code>⊡</code> (fit to view).</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🖱️ Navigation:</strong> Scroll to zoom • <span class="kbd">Alt</span>+drag to pan • Double‑click image in gallery to place it • Drag and drop images from gallery to canvas.
+            </div>
+        </section>
+
+        <section id="section-tools-en" class="section">
+            <h1 class="section-title">🛠️ Tools</h1>
+
+            <h2 class="subsection-title">Select (↖️)</h2>
+            <p>Default mode. Click any object to select it. The <strong>Properties Panel</strong> appears on the right side of the sidebar, allowing you to edit:</p>
+            <ul>
+                <li><strong>For images</strong>: label/name, width, height (maintains aspect ratio).</li>
+                <li><strong>For text</strong>: text content and color.</li>
+            </ul>
+            <p>Selected objects can be moved, resized, or rotated. Press <code>🗑️ Remove</code> to delete the selected object.</p>
+
+            <h2 class="subsection-title">Brush (🖌️)</h2>
+            <p>Freehand drawing tool. Adjust <strong>Size</strong> (4–120px) and <strong>Color</strong> in the brush options. Strokes are added to the <strong>active layer</strong> and can be erased using the Eraser tool.</p>
+            <ul>
+                <li>Strokes are non‑selectable and cannot be moved or resized.</li>
+                <li>Each stroke is stored as a path with its own color and size.</li>
+            </ul>
+
+            <h2 class="subsection-title">Eraser (🧹)</h2>
+            <p>Removes brush strokes from the active layer. Adjust the <strong>Size</strong> slider to control the eraser diameter.</p>
+            <ul>
+                <li>Only brush strokes on the active layer are erased.</li>
+                <li>Images and text are <strong>not</strong> affected by the eraser.</li>
+            </ul>
+
+            <h2 class="subsection-title">Image (🖼️)</h2>
+            <p>Opens the Image Gallery panel. Upload images using the <code>+ Add Image</code> button.</p>
+            <ul>
+                <li><strong>Drag & drop</strong>: drag a thumbnail from the gallery onto the canvas to place it at the cursor position.</li>
+                <li><strong>Double‑click</strong>: places the image at the centre of the map.</li>
+                <li>Images are inserted on the active layer and can be selected, moved, and resized.</li>
+            </ul>
+
+            <h2 class="subsection-title">Text (📝)</h2>
+            <p>Adds a text label to the canvas. Type your text in the input field and click <code>Add</code> (or press <span class="kbd">Enter</span>).</p>
+            <ul>
+                <li>Text uses the <strong>Cinzel</strong> font family for a fantasy aesthetic.</li>
+                <li>Text color, content, and position can be edited via the Properties Panel when selected.</li>
+                <li>Text is placed on the active layer.</li>
+            </ul>
+
+            <h2 class="subsection-title">Color Picker (🧪 Dripper)</h2>
+            <p>Click anywhere on the canvas to sample a color. The picked color is applied to the brush, and the tool automatically switches back to <strong>Brush</strong> mode.</p>
+            <ul>
+                <li>Useful for matching existing map colors.</li>
+                <li>The color is stored in the brush color picker for further use.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>💡 Tip:</strong> The active layer is highlighted in the layer list. All new objects (brush strokes, images, text) are added to the active layer.
+            </div>
+        </section>
+
+        <section id="section-layers-en" class="section">
+            <h1 class="section-title">📚 Layers</h1>
+            <p>Layers are a powerful way to organise your map. Each layer can contain multiple objects, and you can toggle visibility, reorder, and edit independently.</p>
+
+            <h2 class="subsection-title">Managing Layers</h2>
+            <ul>
+                <li><strong>Active layer</strong> – selected via the dropdown or by clicking a layer in the list. All new objects are added to this layer.</li>
+                <li><strong>Visibility</strong> – click the checkbox next to a layer name to show/hide it. Hidden layers are not exported.</li>
+                <li><strong>Delete</strong> – click <code>✕</code> on a layer to remove it and all its objects. At least one layer must remain.</li>
+                <li><strong>Create</strong> – click <code>+ New</code>, enter a name, and click <code>Create</code>. The new layer becomes active.</li>
+            </ul>
+
+            <h2 class="subsection-title">Layer Behavior</h2>
+            <ul>
+                <li>Objects on a layer inherit the layer's visibility.</li>
+                <li>When you delete a layer, all objects on that layer are removed from the canvas.</li>
+                <li>The <strong>Base</strong> layer is created by default and cannot be renamed (but can be deleted if other layers exist).</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>📌 Pro tip:</strong> Use layers to separate terrain, labels, landmarks, and notes. This makes editing and exporting much more flexible.
+            </div>
+        </section>
+
+        <section id="section-export-en" class="section">
+            <h1 class="section-title">📤 Export & Project Management</h1>
+
+            <h2 class="subsection-title">Export</h2>
+            <p>Export your map as a high-quality image file. The export captures the entire map at its native resolution.</p>
+            <ul>
+                <li><strong>PNG</strong> – lossless, supports transparency. Best for digital use.</li>
+                <li><strong>JPG</strong> – smaller file size, suitable for sharing and printing.</li>
+                <li><strong>SVG</strong> – vector format. Scalable and editable in vector software. Note: brush strokes are exported as vector paths.</li>
+            </ul>
+            <p>The export includes all visible layers. Hidden layers are excluded.</p>
+
+            <h2 class="subsection-title">Project File (.fmf)</h2>
+            <p>The native file format is a compressed JSON archive with the <code>.fmf</code> extension. It stores:</p>
+            <ul>
+                <li>Map size (width/height).</li>
+                <li>All layers (names, visibility, order).</li>
+                <li>All objects (brush strokes, images, text) with their properties (position, color, size, content).</li>
+                <li>All images embedded as base64 data URLs.</li>
+            </ul>
+            <p>Because images are embedded, the file can be large, but it is completely self‑contained.</p>
+
+            <h2 class="subsection-title">Save & Load</h2>
+            <ul>
+                <li><strong>💾 Save .fmf</strong> – compresses and downloads the current project as a <code>.fmf</code> file.</li>
+                <li><strong>📂 Load</strong> – opens a file picker to load a previously saved <code>.fmf</code> project.</li>
+            </ul>
+            <p>Loading a project replaces the current canvas. Make sure to save any unsaved work before loading.</p>
+        </section>
+
+        <section id="section-advanced-en" class="section">
+            <h1 class="section-title">⚙️ Advanced Features</h1>
+
+            <h2 class="subsection-title">Activity Log</h2>
+            <p>The log at the bottom of the sidebar tracks your actions – layer changes, tool usage, exports, saves, and errors. Useful for debugging and keeping track of your workflow.</p>
+
+            <h2 class="subsection-title">Keyboard Shortcuts</h2>
+            <ul>
+                <li><span class="kbd">Scroll</span> – zoom in/out on the canvas.</li>
+                <li><span class="kbd">Alt</span> + drag – pan the canvas.</li>
+                <li><span class="kbd">Enter</span> – when typing text, adds the label to the canvas.</li>
+                <li><span class="kbd">Double‑click</span> on a gallery image – places it at the map centre.</li>
+            </ul>
+
+            <h2 class="subsection-title">Color Picker (Dripper)</h2>
+            <p>The <strong>🧪 Dripper</strong> tool samples any pixel on the canvas and applies the color to the brush. After sampling, the tool automatically switches back to Brush mode so you can start drawing immediately.</p>
+
+            <h2 class="subsection-title">Properties Panel</h2>
+            <p>When an object is selected with the <strong>Select</strong> tool, the Properties Panel appears. It provides context‑sensitive controls:</p>
+            <ul>
+                <li><strong>Image</strong> – edit the label/name, and adjust width/height (aspect ratio is locked).</li>
+                <li><strong>Text</strong> – edit the text content and the fill color.</li>
+                <li><strong>Brush strokes</strong> – are not selectable, so no properties are shown.</li>
+            </ul>
+
+            <h2 class="subsection-title">Canvas Constraints</h2>
+            <p>All objects are constrained to the map boundaries. You cannot drag an object outside the map area. This ensures your map stays clean and export-ready.</p>
+
+            <h2 class="subsection-title">Performance Tips</h2>
+            <ul>
+                <li>Larger map sizes (4K) require more memory. Use 2K or 1K for faster performance during sketching.</li>
+                <li>Keep the number of brush strokes reasonable – each stroke is a separate path object.</li>
+                <li>Use layers to hide content you're not actively working on – this improves rendering speed.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🔄 Remember:</strong> The <code>.fmf</code> file is your project. Save often, and keep backups of important maps.
+            </div>
+        </section>
+
+        <!-- ========== SPANISH SECTIONS ========== -->
+
+        <section id="section-overview-es" class="section">
+            <h1 class="section-title">🗺️ Map for Mythopoeia · Manual de Usuario</h1>
+            <p><strong>Map for Mythopoeia</strong> es una herramienta de cartografía diseñada para creadores de mundos, directores de juego y artistas. Ofrece un lienzo completo para dibujar, aplicar capas, anotar y exportar mapas de alta calidad. Construido sobre <strong>Fabric.js</strong>, proporciona una experiencia fluida e interactiva con pinceles, imágenes, etiquetas de texto y un sistema completo de capas.</p>
+            <p>Todo se almacena en un archivo <code>.fmf</code> portátil, lo que facilita guardar, cargar y compartir tus proyectos.</p>
+
+            <div class="grid-cols">
+                <div class="card"><h4>📐 Tamaño del Mapa</h4><p>Elige entre 1K, 2K o 4K – ideal desde bocetos rápidos hasta mapas regionales detallados.</p></div>
+                <div class="card"><h4>🖌️ Herramientas de Dibujo</h4><p>Pincel, borrador, colocación de imágenes y etiquetas de texto. Control total de color y tamaño.</p></div>
+                <div class="card"><h4>📚 Sistema de Capas</h4><p>Organiza tu trabajo con múltiples capas. Alterna visibilidad, reordena y edita de forma independiente.</p></div>
+                <div class="card"><h4>🖼️ Galería de Imágenes</h4><p>Sube y gestiona imágenes de referencia. Arrastra o haz doble clic para colocarlas en el lienzo.</p></div>
+                <div class="card"><h4>📤 Opciones de Exportación</h4><p>Exporta tu mapa como PNG, JPG o SVG – perfecto para imprimir, compartir o editar.</p></div>
+                <div class="card"><h4>💾 Formato Nativo</h4><p>Guarda tu proyecto como un archivo <code>.fmf</code> comprimido. Todas las capas, objetos e imágenes se conservan.</p></div>
+            </div>
+
+            <div class="highlight">
+                <strong>💡 Concepto clave:</strong> El lienzo es tu mapa. Usa capas para separar elementos (terreno, puntos de interés, etiquetas, notas). La capa activa recibe todos los objetos nuevos. El panel de propiedades te permite ajustar los elementos seleccionados sin salir del espacio de trabajo.
+            </div>
+            <p>Todas las imágenes y datos están incrustados en el archivo del proyecto. Guarda, carga y comparte con un solo archivo <code>.fmf</code>.</p>
+        </section>
+
+        <section id="section-interface-es" class="section">
+            <h1 class="section-title">🖥️ Visión general de la interfaz</h1>
+            <p>La interfaz se divide en una <strong>barra lateral</strong> (izquierda) y el <strong>lienzo</strong> (vista principal). La barra lateral se puede ocultar con el botón <code>☰</code>.</p>
+
+            <h2 class="subsection-title">Barra lateral</h2>
+            <ul>
+                <li><strong>Tamaño del mapa</strong> – cambia entre 1K, 2K o 4K. Cambiar el tamaño borra el lienzo (se requiere confirmación).</li>
+                <li><strong>Herramientas</strong> – Seleccionar, Pincel, Borrador, Imagen, Texto y Cuentagotas (Selector de color).</li>
+                <li><strong>Opciones del pincel</strong> – ajusta el tamaño (4–120px) y el color de los trazos.</li>
+                <li><strong>Galería de imágenes</strong> – sube imágenes, arrástralas al lienzo o haz doble clic para colocarlas en el centro.</li>
+                <li><strong>Herramienta de texto</strong> – escribe una etiqueta y haz clic en <code>Add</code> para colocarla en la capa activa.</li>
+                <li><strong>Capas</strong> – crea, elimina, alterna visibilidad y establece la capa activa.</li>
+                <li><strong>Panel de propiedades</strong> – aparece cuando se selecciona un objeto. Edita nombre, dimensiones, color o contenido de texto.</li>
+                <li><strong>Exportar</strong> – descarga el mapa actual como PNG, JPG o SVG.</li>
+                <li><strong>Proyecto</strong> – guarda tu trabajo como <code>.fmf</code> o carga un proyecto anterior.</li>
+                <li><strong>Registro de actividad</strong> – muestra las acciones recientes para referencia.</li>
+            </ul>
+
+            <h2 class="subsection-title">Lienzo</h2>
+            <ul>
+                <li>El lienzo muestra tu mapa en la resolución elegida.</li>
+                <li>Un borde dorado marca el límite del mapa – los objetos fuera de este borde se recortan.</li>
+                <li><strong>Zoom</strong>: desplázate para acercar/alejar. El nivel de zoom se muestra en la esquina inferior derecha.</li>
+                <li><strong>Panorámica</strong>: mantén <span class="kbd">Alt</span> y arrastra para desplazarte por el lienzo.</li>
+                <li>Controles: <code>＋</code> (acercar), <code>－</code> (alejar), <code>⊡</code> (ajustar a la vista).</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🖱️ Navegación:</strong> Desplázate para hacer zoom • <span class="kbd">Alt</span>+arrastrar para desplazar • Doble clic en una imagen de la galería para colocarla • Arrastra y suelta imágenes desde la galería al lienzo.
+            </div>
+        </section>
+
+        <section id="section-tools-es" class="section">
+            <h1 class="section-title">🛠️ Herramientas</h1>
+
+            <h2 class="subsection-title">Seleccionar (↖️)</h2>
+            <p>Modo por defecto. Haz clic en cualquier objeto para seleccionarlo. El <strong>Panel de propiedades</strong> aparece en la barra lateral, permitiéndote editar:</p>
+            <ul>
+                <li><strong>Para imágenes</strong>: etiqueta/nombre, ancho, alto (mantiene la relación de aspecto).</li>
+                <li><strong>Para texto</strong>: contenido y color.</li>
+            </ul>
+            <p>Los objetos seleccionados se pueden mover, redimensionar o rotar. Presiona <code>🗑️ Remove</code> para eliminar el objeto seleccionado.</p>
+
+            <h2 class="subsection-title">Pincel (🖌️)</h2>
+            <p>Herramienta de dibujo a mano alzada. Ajusta el <strong>Tamaño</strong> (4–120px) y el <strong>Color</strong> en las opciones del pincel. Los trazos se añaden a la <strong>capa activa</strong> y se pueden borrar con la herramienta Borrador.</p>
+            <ul>
+                <li>Los trazos no son seleccionables y no se pueden mover ni redimensionar.</li>
+                <li>Cada trazo se almacena como una ruta con su propio color y tamaño.</li>
+            </ul>
+
+            <h2 class="subsection-title">Borrador (🧹)</h2>
+            <p>Elimina los trazos del pincel en la capa activa. Ajusta el control deslizante de <strong>Tamaño</strong> para controlar el diámetro del borrador.</p>
+            <ul>
+                <li>Solo se borran los trazos del pincel en la capa activa.</li>
+                <li>Las imágenes y el texto <strong>no</strong> se ven afectados por el borrador.</li>
+            </ul>
+
+            <h2 class="subsection-title">Imagen (🖼️)</h2>
+            <p>Abre el panel de la Galería de imágenes. Sube imágenes con el botón <code>+ Add Image</code>.</p>
+            <ul>
+                <li><strong>Arrastrar y soltar</strong>: arrastra una miniatura de la galería al lienzo para colocarla en la posición del cursor.</li>
+                <li><strong>Doble clic</strong>: coloca la imagen en el centro del mapa.</li>
+                <li>Las imágenes se insertan en la capa activa y se pueden seleccionar, mover y redimensionar.</li>
+            </ul>
+
+            <h2 class="subsection-title">Texto (📝)</h2>
+            <p>Añade una etiqueta de texto al lienzo. Escribe tu texto en el campo y haz clic en <code>Add</code> (o presiona <span class="kbd">Enter</span>).</p>
+            <ul>
+                <li>El texto utiliza la fuente <strong>Cinzel</strong> para un estilo fantástico.</li>
+                <li>El color, el contenido y la posición del texto se pueden editar en el Panel de propiedades cuando está seleccionado.</li>
+                <li>El texto se coloca en la capa activa.</li>
+            </ul>
+
+            <h2 class="subsection-title">Selector de color (🧪 Cuentagotas)</h2>
+            <p>Haz clic en cualquier lugar del lienzo para muestrear un color. El color elegido se aplica al pincel y la herramienta cambia automáticamente al modo <strong>Pincel</strong>.</p>
+            <ul>
+                <li>Útil para igualar los colores existentes del mapa.</li>
+                <li>El color se almacena en el selector de color del pincel para su uso posterior.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>💡 Consejo:</strong> La capa activa está resaltada en la lista de capas. Todos los objetos nuevos (trazos del pincel, imágenes, texto) se añaden a la capa activa.
+            </div>
+        </section>
+
+        <section id="section-layers-es" class="section">
+            <h1 class="section-title">📚 Capas</h1>
+            <p>Las capas son una forma potente de organizar tu mapa. Cada capa puede contener múltiples objetos, y puedes alternar la visibilidad, reordenar y editar de forma independiente.</p>
+
+            <h2 class="subsection-title">Gestionar capas</h2>
+            <ul>
+                <li><strong>Capa activa</strong> – se selecciona mediante el menú desplegable o haciendo clic en una capa de la lista. Todos los objetos nuevos se añaden a esta capa.</li>
+                <li><strong>Visibilidad</strong> – haz clic en la casilla junto al nombre de la capa para mostrar/ocultarla. Las capas ocultas no se exportan.</li>
+                <li><strong>Eliminar</strong> – haz clic en <code>✕</code> en una capa para eliminarla y todos sus objetos. Debe quedar al menos una capa.</li>
+                <li><strong>Crear</strong> – haz clic en <code>+ New</code>, introduce un nombre y haz clic en <code>Create</code>. La nueva capa se convierte en la activa.</li>
+            </ul>
+
+            <h2 class="subsection-title">Comportamiento de las capas</h2>
+            <ul>
+                <li>Los objetos de una capa heredan la visibilidad de la capa.</li>
+                <li>Cuando eliminas una capa, todos los objetos de esa capa se eliminan del lienzo.</li>
+                <li>La capa <strong>Base</strong> se crea por defecto y no se puede renombrar (pero se puede eliminar si existen otras capas).</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>📌 Consejo profesional:</strong> Usa capas para separar el terreno, las etiquetas, los puntos de interés y las notas. Esto hace que la edición y la exportación sean mucho más flexibles.
+            </div>
+        </section>
+
+        <section id="section-export-es" class="section">
+            <h1 class="section-title">📤 Exportación y gestión de proyectos</h1>
+
+            <h2 class="subsection-title">Exportar</h2>
+            <p>Exporta tu mapa como un archivo de imagen de alta calidad. La exportación captura todo el mapa en su resolución nativa.</p>
+            <ul>
+                <li><strong>PNG</strong> – sin pérdida, admite transparencia. Ideal para uso digital.</li>
+                <li><strong>JPG</strong> – tamaño de archivo más pequeño, adecuado para compartir e imprimir.</li>
+                <li><strong>SVG</strong> – formato vectorial. Escalable y editable en software vectorial. Los trazos del pincel se exportan como rutas vectoriales.</li>
+            </ul>
+            <p>La exportación incluye todas las capas visibles. Las capas ocultas se excluyen.</p>
+
+            <h2 class="subsection-title">Archivo de proyecto (.fmf)</h2>
+            <p>El formato nativo es un archivo JSON comprimido con extensión <code>.fmf</code>. Almacena:</p>
+            <ul>
+                <li>Tamaño del mapa (ancho/alto).</li>
+                <li>Todas las capas (nombres, visibilidad, orden).</li>
+                <li>Todos los objetos (trazos del pincel, imágenes, texto) con sus propiedades (posición, color, tamaño, contenido).</li>
+                <li>Todas las imágenes incrustadas como URL de datos base64.</li>
+            </ul>
+            <p>Como las imágenes están incrustadas, el archivo puede ser grande, pero es completamente autónomo.</p>
+
+            <h2 class="subsection-title">Guardar y cargar</h2>
+            <ul>
+                <li><strong>💾 Save .fmf</strong> – comprime y descarga el proyecto actual como un archivo <code>.fmf</code>.</li>
+                <li><strong>📂 Load</strong> – abre un selector de archivos para cargar un proyecto <code>.fmf</code> guardado anteriormente.</li>
+            </ul>
+            <p>Cargar un proyecto reemplaza el lienzo actual. Asegúrate de guardar cualquier trabajo no guardado antes de cargar.</p>
+        </section>
+
+        <section id="section-advanced-es" class="section">
+            <h1 class="section-title">⚙️ Funciones avanzadas</h1>
+
+            <h2 class="subsection-title">Registro de actividad</h2>
+            <p>El registro en la parte inferior de la barra lateral rastrea tus acciones: cambios de capa, uso de herramientas, exportaciones, guardados y errores. Útil para depurar y hacer un seguimiento de tu flujo de trabajo.</p>
+
+            <h2 class="subsection-title">Atajos de teclado</h2>
+            <ul>
+                <li><span class="kbd">Scroll</span> – zoom en el lienzo.</li>
+                <li><span class="kbd">Alt</span> + arrastrar – desplazar el lienzo.</li>
+                <li><span class="kbd">Enter</span> – al escribir texto, añade la etiqueta al lienzo.</li>
+                <li><span class="kbd">Doble clic</span> en una imagen de la galería – la coloca en el centro del mapa.</li>
+            </ul>
+
+            <h2 class="subsection-title">Selector de color (Cuentagotas)</h2>
+            <p>La herramienta <strong>🧪 Cuentagotas</strong> muestrea cualquier píxel del lienzo y aplica el color al pincel. Después de muestrear, la herramienta cambia automáticamente al modo Pincel para que puedas empezar a dibujar inmediatamente.</p>
+
+            <h2 class="subsection-title">Panel de propiedades</h2>
+            <p>Cuando se selecciona un objeto con la herramienta <strong>Seleccionar</strong>, aparece el Panel de propiedades. Ofrece controles contextuales:</p>
+            <ul>
+                <li><strong>Imagen</strong> – edita la etiqueta/nombre y ajusta el ancho/alto (la relación de aspecto está bloqueada).</li>
+                <li><strong>Texto</strong> – edita el contenido y el color de relleno.</li>
+                <li><strong>Trazos del pincel</strong> – no son seleccionables, por lo que no se muestran propiedades.</li>
+            </ul>
+
+            <h2 class="subsection-title">Restricciones del lienzo</h2>
+            <p>Todos los objetos están restringidos a los límites del mapa. No puedes arrastrar un objeto fuera del área del mapa. Esto asegura que tu mapa se mantenga limpio y listo para exportar.</p>
+
+            <h2 class="subsection-title">Consejos de rendimiento</h2>
+            <ul>
+                <li>Los mapas más grandes (4K) requieren más memoria. Usa 2K o 1K para un rendimiento más rápido durante el boceto.</li>
+                <li>Mantén un número razonable de trazos del pincel – cada trazo es un objeto de ruta independiente.</li>
+                <li>Usa capas para ocultar el contenido en el que no estás trabajando activamente – esto mejora la velocidad de renderizado.</li>
+            </ul>
+
+            <div class="highlight">
+                <strong>🔄 Recuerda:</strong> El archivo <code>.fmf</code> es tu proyecto. Guarda con frecuencia y mantén copias de seguridad de tus mapas importantes.
+            </div>
+        </section>
+
+        <div class="footer-note">
+            Created by Cesar Tinoco, support him on Patreon <a href="https://patreon.com/c/CesarTinocoGG" target="_blank" rel="noopener noreferrer">patreon.com/c/CesarTinocoGG</a> · Map for Mythopoeia v2.7
+        </div>
+
+    </main>
+
+    <script>
+        const tabTranslations = {
+            en: {
+                overview: '📖 Overview',
+                interface: '🖥️ Interface',
+                tools: '🛠️ Tools',
+                layers: '📚 Layers',
+                export: '📤 Export',
+                advanced: '⚙️ Advanced'
+            },
+            es: {
+                overview: '📖 Inicio',
+                interface: '🖥️ Interfaz',
+                tools: '🛠️ Herramientas',
+                layers: '📚 Capas',
+                export: '📤 Exportar',
+                advanced: '⚙️ Avanzado'
+            }
+        };
+
+        let currentLang = 'en';
+        let currentTab = 'overview';
+        const langToggle = document.getElementById('lang-toggle');
+        const navTabs = document.querySelectorAll('.navtab');
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            updateView();
+        }
+
+        function updateView() {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            const targetId = 'section-' + currentTab + '-' + currentLang;
+            const target = document.getElementById(targetId);
+            if (target) target.classList.add('active');
+
+            navTabs.forEach(btn => {
+                const isActive = btn.getAttribute('data-tab') === currentTab;
+                btn.classList.toggle('active', isActive);
+            });
+        }
+
+        function updateNavTexts(lang) {
+            navTabs.forEach(btn => {
+                const tab = btn.getAttribute('data-tab');
+                btn.textContent = tabTranslations[lang][tab] || tab;
+            });
+        }
+
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            langToggle.textContent = lang === 'en' ? '🌐 ES' : '🌐 EN';
+            updateNavTexts(lang);
+            updateView();
+        }
+
+        function toggleLang() {
+            setLanguage(currentLang === 'en' ? 'es' : 'en');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentLang = 'en';
+            currentTab = 'overview';
+            langToggle.textContent = '🌐 ES';
+            updateNavTexts('en');
+            updateView();
+        });
+    </script>
+
+</body>
+</html>
