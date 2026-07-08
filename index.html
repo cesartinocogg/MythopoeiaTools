@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mythopoeia Tools · Worldbuilding Suite</title>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:opsz@14..32&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0b0d15;
+      --bg-secondary: #151a28;
+      --bg-card: #1c2336;
+      --bg-card-hover: #293250;
+      --border-glow: #c9a84c;
+      --text-primary: #f0ede8;
+      --text-secondary: #b9b3a6;
+      --text-muted: #7b766a;
+      --gold: #d4af37;
+      --gold-soft: #e8d49a;
+      --shadow: 0 8px 32px rgba(0,0,0,0.6);
+      --radius: 16px;
+      --transition: 0.25s ease;
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      padding: 0 24px;
+    }
+
+    a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Cinzel', serif;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px 0 60px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 16px 0 8px;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+    }
+
+    .lang-toggle {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: 40px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 6px 16px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .lang-btn.active {
+      background: var(--gold);
+      color: #0b0d15;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+    }
+
+    .lang-btn:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .hero {
+      padding: 60px 0 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.8rem, 8vw, 5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #f0ede8 0%, #d4af37 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: 0.04em;
+      margin-bottom: 12px;
+    }
+
+    .hero .tagline {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      font-weight: 300;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      max-width: 640px;
+      margin: 16px auto 0;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin: 64px 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .mythopoet-card {
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      border: 1px solid rgba(212, 175, 55, 0.15);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .mythopoet-card .text {
+      flex: 2;
+      min-width: 280px;
+    }
+
+    .mythopoet-card .text h3 {
+      font-size: 1.8rem;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .mythopoet-card .text p {
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .mythopoet-card .badge {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 40px;
+      padding: 6px 18px;
+      font-size: 0.8rem;
+      color: var(--gold-soft);
+      letter-spacing: 0.1em;
+      margin-top: 8px;
+    }
+
+    .mythopoet-card .icon-symbol {
+      flex: 0 0 80px;
+      height: 80px;
+      background: radial-gradient(circle at 30% 30%, rgba(212,175,55,0.2), transparent 70%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.4rem;
+      line-height: 1;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin: 24px 0 12px;
+    }
+
+    .tool-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 28px 24px 32px;
+      border: 1px solid rgba(255,255,255,0.04);
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+    }
+
+    .tool-card:hover {
+      background: var(--bg-card-hover);
+      transform: translateY(-6px);
+      border-color: rgba(212, 175, 55, 0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+
+    .tool-card .emoji-big {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+    }
+
+    .tool-card h3 {
+      font-size: 1.4rem;
+      color: var(--gold-soft);
+      margin-bottom: 8px;
+    }
+
+    .tool-card p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+
+    .tool-card .features {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 18px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    .tool-card .features li {
+      padding: 4px 0 4px 24px;
+      position: relative;
+    }
+
+    .tool-card .features li::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+    }
+
+    .tool-btn {
+      display: inline-block;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      transition: var(--transition);
+      text-align: center;
+      cursor: pointer;
+      margin-top: auto;
+      align-self: flex-start;
+      background: rgba(212, 175, 55, 0.03);
+    }
+
+    .tool-btn:hover {
+      background: var(--gold);
+      color: #0b0d15;
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    }
+
+    .footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(212, 175, 55, 0.1);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer a {
+      color: var(--gold);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 0 16px; }
+      .mythopoet-card { padding: 24px; }
+      .top-bar { justify-content: center; }
+      .section-title { font-size: 1.6rem; }
+    }
+
+    [data-i18n] {
+      transition: opacity 0.15s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="top-bar">
+    <div class="lang-toggle">
+      <button class="lang-btn active" data-lang="en" aria-label="English">EN</button>
+      <button class="lang-btn" data-lang="es" aria-label="Español">ES</button>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="tagline" data-i18n="hero_tagline">Mythopoeia · Worldbuilding · Narrative</div>
+    <h1 data-i18n="hero_title">Mythopoeia Tools</h1>
+    <p data-i18n="hero_desc">A suite for mythopoets — craft worlds, weave histories, and breathe life into your stories.</p>
+  </section>
+
+  <h2 class="section-title" data-i18n="section_mythopoet">The Mythopoet</h2>
+  <div class="mythopoet-card">
+    <div class="text">
+      <h3 data-i18n="mythopoet_title">What is a Mythopoet?</h3>
+      <p data-i18n="mythopoet_p1">A mythopoet is a creator of mythic worlds — a weaver of legends, geographies, and cosmologies. Unlike a traditional writer, the mythopoet builds the entire stage: the cultures, the magic, the timelines, and the unspoken rules that make a world feel alive.</p>
+      <p data-i18n="mythopoet_p2">They are part historian, part geographer, part theologian, and part storyteller. Their craft is not just about plotting a narrative, but about constructing a living, breathing universe that can host infinite stories.</p>
+      <span class="badge" data-i18n="mythopoet_badge">✦ architect of worlds</span>
+    </div>
+    <div class="icon-symbol">🌌</div>
+  </div>
+
+  <h2 class="section-title" data-i18n="section_tools">The Three Pillars</h2>
+  <div class="tools-grid">
+
+    <div class="tool-card">
+      <div class="emoji-big">🏛️</div>
+      <h3 data-i18n="tool1_title">Final Worldbuilding Fantasy</h3>
+      <p data-i18n="tool1_desc">A complete content manager for your world. Organise characters, locations, maps, relationships, and timelines in one place.</p>
+      <ul class="features">
+        <li data-i18n="tool1_f1">Custom compendium with user‑defined categories</li>
+        <li data-i18n="tool1_f2">Map archive with character locations</li>
+        <li data-i18n="tool1_f3">Relationship board &amp; chronology viewer</li>
+      </ul>
+      <a href="#" class="tool-btn" data-i18n="tool1_btn" target="_blank">Launch Tool →</a>
+    </div>
+
+    <div class="tool-card">
+      <div class="emoji-big">🗺️</div>
+      <h3 data-i18n="tool2_title">Map for Mythopoeia</h3>
+      <p data-i18n="tool2_desc">A simple image editor — paint freely on a canvas or upload your own images to create beautiful custom maps.</p>
+      <ul class="features">
+        <li data-i18n="tool2_f1">Freehand drawing &amp; colour picker</li>
+        <li data-i18n="tool2_f2">Image upload &amp; layering</li>
+        <li data-i18n="tool2_f3">Export your map as PNG</li>
+      </ul>
+      <a href="#" class="tool-btn" data-i18n="tool2_btn" target="_blank">Launch Tool →</a>
+    </div>
+
+    <div class="tool-card">
+      <div class="emoji-big">📜</div>
+      <h3 data-i18n="tool3_title">Mythopoeia Maker</h3>
+      <p data-i18n="tool3_desc">A passage‑based board for non‑linear, interactive stories. Visualise branching narratives and export them as standalone HTML.</p>
+      <ul class="features">
+        <li data-i18n="tool3_f1">Drag‑and‑drop passage nodes</li>
+        <li data-i18n="tool3_f2">Connect choices &amp; conditions</li>
+        <li data-i18n="tool3_f3">Export interactive HTML adventures</li>
+      </ul>
+      <a href="#" class="tool-btn" data-i18n="tool3_btn" target="_blank">Launch Tool →</a>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p data-i18n="footer_text"></p>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    const i18n = {
+      en: {
+        hero_tagline: 'Mythopoeia · Worldbuilding · Narrative',
+        hero_title: 'Mythopoeia Tools',
+        hero_desc: 'A suite for mythopoets — craft worlds, weave histories, and breathe life into your stories.',
+        section_mythopoet: 'The Mythopoet',
+        mythopoet_title: 'What is a Mythopoet?',
+        mythopoet_p1: 'A mythopoet is a creator of mythic worlds — a weaver of legends, geographies, and cosmologies. Unlike a traditional writer, the mythopoet builds the entire stage: the cultures, the magic, the timelines, and the unspoken rules that make a world feel alive.',
+        mythopoet_p2: 'They are part historian, part geographer, part theologian, and part storyteller. Their craft is not just about plotting a narrative, but about constructing a living, breathing universe that can host infinite stories.',
+        mythopoet_badge: '✦ architect of worlds',
+        section_tools: 'The Three Pillars',
+        tool1_title: 'Final Worldbuilding Fantasy',
+        tool1_desc: 'A complete content manager for your world. Organise characters, locations, maps, relationships, and timelines in one place.',
+        tool1_f1: 'Custom compendium with user‑defined categories',
+        tool1_f2: 'Map archive with character locations',
+        tool1_f3: 'Relationship board &amp; chronology viewer',
+        tool1_btn: 'Launch Tool →',
+        tool2_title: 'Map for Mythopoeia',
+        tool2_desc: 'A simple image editor — paint freely on a canvas or upload your own images to create beautiful custom maps.',
+        tool2_f1: 'Freehand drawing &amp; colour picker',
+        tool2_f2: 'Image upload &amp; layering',
+        tool2_f3: 'Export your map as PNG',
+        tool2_btn: 'Launch Tool →',
+        tool3_title: 'Mythopoeia Maker',
+        tool3_desc: 'A passage‑based board for non‑linear, interactive stories. Visualise branching narratives and export them as standalone HTML.',
+        tool3_f1: 'Drag‑and‑drop passage nodes',
+        tool3_f2: 'Connect choices &amp; conditions',
+        tool3_f3: 'Export interactive HTML adventures',
+        tool3_btn: 'Launch Tool →',
+        footer_text: 'Created by Cesar Tinoco, support him on <a href="https://patreon.com/c/CesarTinocoGG" target="_blank">Patreon</a> (patreon.com/c/CesarTinocoGG)'
+      },
+      es: {
+        hero_tagline: 'Mitopoeia · Construcción de mundos · Narrativa',
+        hero_title: 'Mythopoeia Tools',
+        hero_desc: 'Una suite para mitopoetas — crea mundos, teje historias y da vida a tus relatos.',
+        section_mythopoet: 'El Mitopoeta',
+        mythopoet_title: '¿Qué es un mitopoeta?',
+        mythopoet_p1: 'Un mitopoeta es un creador de mundos míticos — un tejedor de leyendas, geografías y cosmologías. A diferencia del escritor tradicional, el mitopoeta construye todo el escenario: las culturas, la magia, las líneas temporales y las reglas no escritas que hacen que un mundo se sienta vivo.',
+        mythopoet_p2: 'Es parte historiador, parte geógrafo, parte teólogo y parte narrador. Su oficio no es solo trazar una narrativa, sino construir un universo vivo y palpitante que pueda albergar infinitas historias.',
+        mythopoet_badge: '✦ arquitecto de mundos',
+        section_tools: 'Los Tres Pilares',
+        tool1_title: 'Final Worldbuilding Fantasy',
+        tool1_desc: 'Un gestor de contenido completo para tu mundo. Organiza personajes, ubicaciones, mapas, relaciones y líneas de tiempo en un solo lugar.',
+        tool1_f1: 'Compendio personalizado con categorías definidas por el usuario',
+        tool1_f2: 'Archivo de mapas con ubicaciones de personajes',
+        tool1_f3: 'Tablero de relaciones y visor de cronología',
+        tool1_btn: 'Abrir herramienta →',
+        tool2_title: 'Map for Mythopoeia',
+        tool2_desc: 'Un editor de imágenes sencillo — pinta libremente en un lienzo o sube tus propias imágenes para crear mapas personalizados.',
+        tool2_f1: 'Dibujo a mano alzada y selector de color',
+        tool2_f2: 'Subida de imágenes y capas',
+        tool2_f3: 'Exporta tu mapa como PNG',
+        tool2_btn: 'Abrir herramienta →',
+        tool3_title: 'Mythopoeia Maker',
+        tool3_desc: 'Un tablero basado en pasajes para historias interactivas no lineales. Visualiza narrativas ramificadas y expórtalas como HTML independiente.',
+        tool3_f1: 'Nodos de pasaje arrastrar y soltar',
+        tool3_f2: 'Conecta elecciones y condiciones',
+        tool3_f3: 'Exporta aventuras HTML interactivas',
+        tool3_btn: 'Abrir herramienta →',
+        footer_text: 'Creado por Cesar Tinoco, apóyalo en <a href="https://patreon.com/c/CesarTinocoGG" target="_blank">Patreon</a> (patreon.com/c/CesarTinocoGG)'
+      }
+    };
+
+    let currentLang = 'en';
+    const elements = document.querySelectorAll('[data-i18n]');
+
+    function applyLanguage(lang) {
+      if (!i18n[lang]) return;
+      currentLang = lang;
+      const dict = i18n[lang];
+
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[key] !== undefined) {
+          el.innerHTML = dict[key];
+        }
+      });
+
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      document.documentElement.lang = lang;
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const lang = this.dataset.lang;
+        if (lang && lang !== currentLang) {
+          applyLanguage(lang);
+        }
+      });
+    });
+
+    const browserLang = navigator.language || navigator.languages?.[0] || 'en';
+    const primary = browserLang.split('-')[0];
+    if (primary === 'es') {
+      applyLanguage('es');
+    } else {
+      applyLanguage('en');
+    }
+
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const toolName = this.closest('.tool-card').querySelector('h3').textContent;
+        alert(`🔮 ${toolName}\n(launch would open the tool in production)`);
+      });
+    });
+
+  })();
+</script>
+
+</body>
+</html>
