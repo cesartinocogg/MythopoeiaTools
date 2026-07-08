@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FWF Studio · User Manual</title>
+    <link rel="icon" href="favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --void: #05070c;
+            --void-2: #0b101d;
+            --panel: #101728;
+            --panel-2: #162038;
+            --panel-3: #1f2d4e;
+            --line: #223154;
+            --line-soft: #1a2740;
+            --gold: #e2b96f;
+            --gold-glow: rgba(226, 185, 111, .25);
+            --gold-dim: #9c7b46;
+            --teal: #16c79a;
+            --teal-glow: rgba(22, 199, 154, .25);
+            --crimson: #e74c3c;
+            --ink: #d8dee9;
+            --ink-hi: #f8f9fb;
+            --ink-dim: #7f8c9f;
+            --ink-faint: #566179;
+            --f-display: 'Cinzel', serif;
+            --f-body: 'Plus Jakarta Sans', sans-serif;
+            --f-mono: ui-monospace, Consolas, monospace;
+            --radius-s: 8px;
+            --radius-m: 14px;
+            --radius-l: 24px;
+            --shadow-2: 0 12px 40px rgba(0, 0, 0, .5);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: radial-gradient(circle at 50% 0%, #151e36 0%, var(--void) 70%);
+            color: var(--ink);
+            font-family: var(--f-body);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        ::selection { background: var(--gold); color: #1a1305; }
+        ::-webkit-scrollbar { width: 11px; height: 11px; }
+        ::-webkit-scrollbar-track { background: var(--void-2); }
+        ::-webkit-scrollbar-thumb { background: var(--panel-3); border-radius: 8px; border: 2px solid var(--void-2); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        button { font-family: inherit; cursor: pointer; }
+        input, textarea, select { font-family: var(--f-body); }
+        :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: 4px; }
+
+        .topbar {
+            position: sticky; top: 0; z-index: 60;
+            display: flex; align-items: center; gap: 20px;
+            padding: 12px 24px;
+            background: rgba(8, 8, 13, .86);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line-soft);
+            flex-wrap: wrap;
+        }
+        .brand {
+            display: flex; align-items: center; gap: 10px;
+            background: none; border: none; padding: 0;
+            color: var(--ink-hi);
+            font-family: var(--f-display);
+            font-size: 20px; font-weight: 700; letter-spacing: .06em;
+            cursor: default;
+        }
+        .brand-favicon { width: 24px; height: 24px; object-fit: contain; flex: none; }
+
+        .navtabs {
+            display: flex; gap: 4px; flex: 1;
+            background: var(--void-2); padding: 4px;
+            border-radius: 30px; border: 1px solid var(--line);
+            overflow-x: auto;
+        }
+        .navtab {
+            background: none; border: none; color: var(--ink-dim);
+            padding: 8px 18px; border-radius: 24px; cursor: pointer;
+            font-size: 13px; font-weight: 600; transition: all .2s; white-space: nowrap;
+        }
+        .navtab:hover { color: var(--ink-hi); }
+        .navtab.active { background: var(--gold); color: #000; font-weight: 700; box-shadow: 0 0 12px var(--gold-glow); }
+
+        .lang-toggle {
+            background: var(--panel-3);
+            border: 1px solid var(--line);
+            color: var(--gold);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: .2s;
+            flex-shrink: 0;
+        }
+        .lang-toggle:hover { background: var(--gold); color: #000; border-color: var(--gold); }
+
+        .workspace {
+            flex: 1;
+            padding: 30px 40px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title {
+            font-family: var(--f-display);
+            font-size: 32px;
+            color: var(--gold);
+            border-bottom: 2px solid var(--line);
+            padding-bottom: 12px;
+            margin-bottom: 28px;
+            letter-spacing: .04em;
+        }
+        .subsection-title {
+            font-family: var(--f-display);
+            font-size: 24px;
+            color: var(--gold);
+            margin: 32px 0 16px 0;
+            border-left: 4px solid var(--gold);
+            padding-left: 16px;
+        }
+        .subsection-title-2 {
+            font-family: var(--f-display);
+            font-size: 20px;
+            color: var(--teal);
+            margin: 24px 0 12px 0;
+        }
+        p, li {
+            line-height: 1.7;
+            color: var(--ink);
+            margin-bottom: 14px;
+            font-size: 16px;
+        }
+        ul, ol {
+            margin: 10px 0 20px 28px;
+        }
+        li { margin-bottom: 6px; }
+        .highlight {
+            background: var(--panel-2);
+            border-left: 3px solid var(--gold);
+            padding: 14px 20px;
+            border-radius: var(--radius-s);
+            margin: 16px 0;
+            color: var(--ink-hi);
+        }
+        .highlight strong { color: var(--gold); }
+        code {
+            background: var(--void-2);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.9em;
+            color: var(--teal);
+            border: 1px solid var(--line-soft);
+        }
+        .kbd {
+            display: inline-block;
+            background: var(--panel-3);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-family: var(--f-mono);
+            font-size: 0.85em;
+            border: 1px solid var(--line);
+            color: var(--gold);
+        }
+        .grid-cols {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius-m);
+            padding: 20px;
+            transition: all .2s;
+        }
+        .card:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .card h4 {
+            font-family: var(--f-display);
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        .card p { font-size: 14px; margin-bottom: 0; color: var(--ink-dim); }
+
+        .badge {
+            display: inline-block;
+            background: var(--gold);
+            color: #000;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 6px;
+        }
+        .badge-teal {
+            background: var(--teal);
+            color: #000;
+        }
+        .badge-crimson {
+            background: var(--crimson);
+            color: #fff;
+        }
+
+        .icon-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            margin: 12px 0;
+        }
+        .icon-list span {
+            font-size: 14px;
+            background: var(--panel-2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--line-soft);
+        }
+
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--line-soft);
+            font-size: 14px;
+            color: var(--ink-faint);
+            text-align: center;
+        }
+        .footer-note a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .footer-note a:hover { text-decoration: underline; }
+
+        @media (max-width: 780px) {
+            .workspace { padding: 20px; }
+            .topbar { flex-direction: column; align-items: stretch; gap: 10px; }
+            .navtabs { order: 2; overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap; width:100%;">
+            <div class="brand">
+                <img src="favicon.ico" class="brand-favicon" alt="Favicon" onerror="this.style.display='none'" />
+                <span>FWF Studio · Manual</span>
+            </div>
+            <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()">🌐 ES</button>
+        </div>
+
+        <nav class="navtabs" role="tablist">
+            <button class="navtab active" data-tab="overview" onclick="switchTab('overview')">📖 Overview</button>
+            <button class="navtab" data-tab="interface" onclick="switchTab('interface')">🖥️ Interface</button>
+            <button class="navtab" data-tab="compendium" onclick="switchTab('compendium')">📄 Compendium</button>
+            <button class="navtab" data-tab="maps" onclick="switchTab('maps')">🗺️ Maps</button>
+            <button class="navtab" data-tab="relations" onclick="switchTab('relations')">🕸️ Relations</button>
+            <button class="navtab" data-tab="timeline" onclick="switchTab('timeline')">⏳ Timeline</button>
+            <button class="navtab" data-tab="advanced" onclick="switchTab('advanced')">⚙️ Advanced</button>
+        </nav>
+    </header>
+
+    <main class="workspace">
+
+        <!-- ENGLISH SECTIONS -->
+        <section id="section-overview-en" class="section active">
+            <h1 class="section-title">📖 FWF Studio · User Manual</h1>
+            <p><strong>FWF Studio</strong> is a complete web‑based worldbuilding suite. It combines a <strong>compendium</strong> of entries (characters, locations, items, lore), an interactive <strong>map</strong> editor with layers and linked pins/zones, a <strong>relation board</strong> to visualise connections, a <strong>timeline</strong> for historical events, and powerful <strong>export</strong> tools. Everything is stored in a single portable <code>.fwf</code> file.</p>
+            <p>This manual covers every feature, from the first launch to advanced workflows.</p>
+            <div class="grid-cols">
+                <div class="card"><h4>🏠 Home</h4><p>Dashboard with world stats, cover, and quick access to all sections.</p></div>
+                <div class="card"><h4>📄 Compendium</h4><p>Create, edit, and browse entries with Markdown, tags, categories, and wiki links.</p></div>
+                <div class="card"><h4>🗺️ Maps</h4><p>Draw pins and zones on layered maps, link them to entries, export as PNG/JPG/SVG.</p></div>
+                <div class="card"><h4>🕸️ Relations</h4><p>Build an interactive graph of entities, add custom relation labels, drag nodes.</p></div>
+                <div class="card"><h4>⏳ Timeline</h4><p>Log historical milestones with years, titles, and rich descriptions (Markdown).</p></div>
+                <div class="card"><h4>⚙️ World Config</h4><p>Set world name, description, cover, background, and manage categories.</p></div>
+            </div>
+            <div class="highlight">
+                <strong>💡 Key concept:</strong> Everything is interconnected. Entries can be linked via <code>@mentions</code> (wiki style) in any text field. Pins/zones on maps can point to entries. The relation board visually maps connections. The timeline entries can also contain mentions.
+            </div>
+            <p>All data – including images – is embedded inside the <code>.fwf</code> file. Save, load, share with a single file.</p>
+        </section>
+
+        <section id="section-interface-en" class="section">
+            <h1 class="section-title">🖥️ Interface Overview</h1>
+            <p>The interface is built around a fixed top bar and a main workspace that changes according to the selected tab.</p>
+            <h2 class="subsection-title">Top Bar</h2>
+            <ul>
+                <li><strong>Brand / World name</strong> – click to go to <em>Home</em>.</li>
+                <li><strong>Navigation tabs</strong> – switch between main sections.</li>
+                <li><strong>⚙️ World & Categories</strong> – opens the configuration modal.</li>
+                <li><strong>Status indicator</strong> – <span class="badge">🟢 Ready</span> (no pending changes) or <span class="badge" style="background:#f39c12;color:#000;">🟡 Unsaved</span> (changes made).</li>
+                <li><strong>📤 Export</strong> – opens export options (native .fwf, Markdown, JS module).</li>
+                <li><strong>📂 Load .fwf</strong> – load a previously saved world file.</li>
+                <li><strong>💾 Save .fwf</strong> – save current state to a compressed .fwf file.</li>
+                <li><strong>🌐 ES / EN</strong> – toggle language (persistent in browser).</li>
+            </ul>
+            <h2 class="subsection-title">Workspace</h2>
+            <p>Each tab presents a different workspace:</p>
+            <ul>
+                <li><strong>Home</strong> – world summary, statistics, quick‑access cards.</li>
+                <li><strong>Compendium</strong> – entry list with search/filters, plus viewer/editor.</li>
+                <li><strong>Maps</strong> – interactive canvas with layers, tools, and properties panel.</li>
+                <li><strong>Relations</strong> – draggable node graph with zoom/pan.</li>
+                <li><strong>Timeline</strong> – vertical timeline with event cards.</li>
+            </ul>
+            <div class="highlight">
+                <strong>🔄 Auto‑save indicator:</strong> Any modification marks the state as “dirty”. The status pill turns yellow. Don’t forget to save your work with <code>💾 Save .fwf</code> before closing.
+            </div>
+        </section>
+
+        <section id="section-compendium-en" class="section">
+            <h1 class="section-title">📄 Compendium</h1>
+            <p>The compendium is the heart of FWF Studio – it stores all your world entries. Each entry has a title, category, tags, an optional cover image, and Markdown content.</p>
+            <h2 class="subsection-title">Entry List</h2>
+            <ul>
+                <li><strong>Search bar</strong> – filters by title or content.</li>
+                <li><strong>Category filter</strong> – dropdown with all defined categories.</li>
+                <li><strong>Tag filter</strong> – type a tag to show only entries containing it.</li>
+                <li><strong>+ New Entry</strong> – creates a new entry and opens the editor.</li>
+            </ul>
+            <p>Each card shows: cover image (if any), category icon/name, title, a content snippet, and clickable tags. Click a tag to filter by it.</p>
+            <h2 class="subsection-title">Viewer</h2>
+            <p>Click any entry card to open the viewer. It displays:</p>
+            <ul>
+                <li>Cover image, category, title.</li>
+                <li>Rendered Markdown content (with active wiki links).</li>
+                <li>Tags (clickable to filter).</li>
+                <li><strong>Relations</strong> section – shows all links from/to this entry on the relation board. Click a relation to jump to the linked entry.</li>
+            </ul>
+            <p>Buttons: <code>⬅ Back to Compendium</code>, <code>✏️ Edit Entry</code>, <code>🗑️ Delete</code>.</p>
+            <h2 class="subsection-title">Editor</h2>
+            <p>The editor is split into two panels:</p>
+            <ul>
+                <li><strong>Left panel (edit)</strong>: Title, Category, Tags (comma‑separated), <code>🖼️ Cover</code> button to upload an image, and the main Markdown content area. The content field supports <strong>@mentions</strong> (see Advanced section).</li>
+                <li><strong>Right panel (preview)</strong>: live preview of the rendered Markdown, with wiki links active.</li>
+            </ul>
+            <p>Buttons: <code>⬅ Back to Viewer</code> (saves changes) and <code>✔ Save Changes</code> (saves and stays in editor).</p>
+        </section>
+
+        <section id="section-maps-en" class="section">
+            <h1 class="section-title">🗺️ Maps</h1>
+            <p>The map editor supports multiple maps, each with its own background image, layers, and objects (pins and zones). Objects can be linked to compendium entries.</p>
+            <h2 class="subsection-title">Map Management</h2>
+            <ul>
+                <li><strong>Map selector</strong> – switch between existing maps.</li>
+                <li><strong>+ New Map</strong> – create a new map (name required).</li>
+                <li><strong>🗑️ Delete Map</strong> – remove current map (at least one map must remain).</li>
+            </ul>
+            <h2 class="subsection-title">Layers</h2>
+            <ul>
+                <li>Each map has layers (starting with a base layer). Layers help organise visual elements.</li>
+                <li><strong>Active layer selector</strong> – new objects are added to the selected layer.</li>
+                <li><strong>Layer list</strong> – each layer has a visibility checkbox and a delete button (except the last layer).</li>
+                <li><strong>+ New</strong> – add a new layer.</li>
+            </ul>
+            <h2 class="subsection-title">Tools</h2>
+            <ul>
+                <li><strong>📍 Pin</strong> – click to add a pin at the centre of the canvas (or current cursor position). Drag to reposition.</li>
+                <li><strong>🛑 Zone</strong> – activate polygon drawing mode. Click on the canvas to add vertices. Press <span class="kbd">Enter</span> to close the polygon. The zone appears with a label on top.</li>
+            </ul>
+            <p>When an object is selected, the <strong>Properties</strong> panel appears:</p>
+            <ul>
+                <li><strong>Name / Text</strong> – displayed label.</li>
+                <li><strong>For zones</strong>: font size, fill colour, and opacity of the polygon (text remains fully opaque).</li>
+                <li><strong>Link to entry</strong> – dropdown with all entries. If linked, the entry’s viewer will show a marker <code>📍</code> pointing to this map.</li>
+                <li><strong>🗑️ Remove</strong> – deletes the selected object.</li>
+            </ul>
+            <h2 class="subsection-title">Export Canvas</h2>
+            <p>Buttons <code>PNG</code>, <code>JPG</code>, <code>SVG</code> download the current map view (including background and all visible layers).</p>
+            <div class="highlight">
+                <strong>🖱️ Navigation:</strong> Scroll to zoom, <span class="kbd">Alt</span>+drag to pan.
+            </div>
+        </section>
+
+        <section id="section-relations-en" class="section">
+            <h1 class="section-title">🕸️ Relations</h1>
+            <p>The relation board is a free‑form canvas where each node represents a compendium entry, and edges represent custom relations between them.</p>
+            <h2 class="subsection-title">Adding Nodes</h2>
+            <ul>
+                <li>Use the dropdown in the top bar (only entries not already on the board are shown).</li>
+                <li>Click <code>+ Add to Board</code> – the node appears at the centre of the visible area.</li>
+            </ul>
+            <h2 class="subsection-title">Interacting with Nodes</h2>
+            <ul>
+                <li><strong>Drag</strong> – click and hold on any node to reposition it.</li>
+                <li><strong>📖 View</strong> – opens a modal with the entry’s full content (Markdown rendered, with tags and relations).</li>
+                <li><strong>🟢 Link</strong> – starts the linking mode. Click another node to open a dialog where you can define both directions of the relation (e.g., “is ally of” and “is allied with”).</li>
+                <li><strong>✖ Remove</strong> – deletes the node and all its incident edges from the board.</li>
+            </ul>
+            <h2 class="subsection-title">Managing Edges</h2>
+            <p>Each edge is drawn as a line with an arrowhead. The label in the middle shows the forward relation. Click the label to open an edit modal where you can:</p>
+            <ul>
+                <li>Change both direction labels.</li>
+                <li>Delete the edge entirely.</li>
+            </ul>
+            <h2 class="subsection-title">Export</h2>
+            <p>Use the buttons <code>PNG</code>, <code>JPG</code>, <code>SVG</code> to capture the entire board (including all nodes and edges).</p>
+            <div class="highlight">
+                <strong>🖱️ Navigation:</strong> Scroll to zoom, <span class="kbd">Alt</span>+drag to pan. Nodes are independent of the zoom/pan.
+            </div>
+        </section>
+
+        <section id="section-timeline-en" class="section">
+            <h1 class="section-title">⏳ Timeline</h1>
+            <p>The timeline displays a chronological list of historical milestones. Each event has a year/date (free text), a title, and a description that supports Markdown and wiki links.</p>
+            <ul>
+                <li><strong>+ New Historical Milestone</strong> – opens a modal to fill in the event details.</li>
+                <li>Events are shown in alternating cards (left/right) with the year, title, and rendered description.</li>
+                <li>Each card has <code>✏️ Edit</code> and <code>🗑️ Delete</code> buttons.</li>
+            </ul>
+            <p>The timeline updates in real time and the counter on the Home page reflects the number of events.</p>
+        </section>
+
+        <section id="section-advanced-en" class="section">
+            <h1 class="section-title">⚙️ Advanced Features</h1>
+            <h2 class="subsection-title">World Configuration</h2>
+            <p>Access via the <code>⚙️ World & Categories</code> button in the top bar. Here you can:</p>
+            <ul>
+                <li>Change the <strong>world name</strong> and <strong>description</strong>.</li>
+                <li>Set a <strong>cover image</strong> (displayed on the Home page).</li>
+                <li>Choose a <strong>background theme</strong> (presets or custom upload) and adjust its opacity.</li>
+                <li>Manage <strong>categories</strong> – add, delete, reorder icons, names, and colours. At least one category must exist.</li>
+            </ul>
+            <h2 class="subsection-title">Wiki Links (@mentions)</h2>
+            <p>Any Markdown text field (entry content, timeline description) supports automatic linking to entries using the <code>@</code> syntax:</p>
+            <ul>
+                <li><code>@EntryTitle</code> – links to the entry with that title (case‑insensitive).</li>
+                <li><code>@[entryId]</code> – explicit link by ID (more robust).</li>
+            </ul>
+            <p>While typing <code>@</code> in the entry editor, a dropdown appears with matching entries. Select one to insert a proper <code>@[id]</code> link.</p>
+            <p>In the rendered view, existing links are shown in <strong>green</strong> (with a <code>📍</code> icon if the entry is also on a map). Broken links appear in <strong>orange</strong> and can be clicked to create a new entry with the suggested title.</p>
+            <p>The system automatically normalizes mentions: when you save an entry, all <code>@Title</code> references are converted to <code>@[id]</code> for stability.</p>
+            <h2 class="subsection-title">.fwf File Format</h2>
+            <p>The native file format is a JSON object compressed with <strong>LZString</strong> and stored with the <code>.fwf</code> extension. It includes:</p>
+            <ul>
+                <li>World metadata (name, description, cover, background, opacity).</li>
+                <li>All categories.</li>
+                <li>All entries (with images as base64).</li>
+                <li>All maps (with background images, layers, objects – pins/zones – and their links).</li>
+                <li>Relation board nodes and edges.</li>
+                <li>Timeline events.</li>
+            </ul>
+            <p>Because images are embedded, the file can be large, but it is completely self‑contained.</p>
+            <h2 class="subsection-title">Export Options</h2>
+            <p>From the <code>📤 Export</code> panel (or the top bar button) you can:</p>
+            <ul>
+                <li><strong>Save Native File (.fwf)</strong> – same as the main save button.</li>
+                <li><strong>Download as Markdown (.md)</strong> – generates a single Markdown file with the world name, description, and all entries (with content, category, and tags).</li>
+                <li><strong>Download as JavaScript Module (.js)</strong> – exports the entire data object as <code>FWF_WORLD_DATA</code> (or as a CommonJS/ES module). Useful for integration with other tools.</li>
+            </ul>
+            <h2 class="subsection-title">Language Switching</h2>
+            <p>The interface can be toggled between <strong>English</strong> and <strong>Spanish</strong> using the <code>🌐 ES/EN</code> button. The choice is saved in your browser’s local storage.</p>
+            <h2 class="subsection-title">Keyboard Shortcuts & Tips</h2>
+            <ul>
+                <li><span class="kbd">Alt</span> + drag on maps or relations board – pan.</li>
+                <li><span class="kbd">Scroll</span> – zoom on maps and relations board.</li>
+                <li><span class="kbd">Enter</span> – while drawing a zone on the map, closes the polygon.</li>
+                <li>In the entry editor, the <code>@</code> autocomplete appears automatically; use arrow keys and <span class="kbd">Enter</span> to select.</li>
+                <li>Click on any tag in the compendium to immediately filter the list by that tag.</li>
+            </ul>
+        </section>
+
+        <!-- SPANISH SECTIONS -->
+        <section id="section-overview-es" class="section">
+            <h1 class="section-title">📖 FWF Studio · Manual de Usuario</h1>
+            <p><strong>FWF Studio</strong> es una suite completa de creación de mundos basada en web. Combina un <strong>compendio</strong> de entradas (personajes, lugares, objetos, mitos), un editor de <strong>mapas</strong> interactivo con capas y pines/zonas vinculados, un tablero de <strong>relaciones</strong> para visualizar conexiones, una <strong>línea de tiempo</strong> para eventos históricos y potentes herramientas de <strong>exportación</strong>. Todo se almacena en un único archivo <code>.fwf</code> portátil.</p>
+            <p>Este manual cubre cada funcionalidad, desde el primer inicio hasta los flujos de trabajo avanzados.</p>
+            <div class="grid-cols">
+                <div class="card"><h4>🏠 Inicio</h4><p>Panel con estadísticas del mundo, portada y accesos rápidos a todas las secciones.</p></div>
+                <div class="card"><h4>📄 Compendio</h4><p>Crea, edita y navega por entradas con Markdown, etiquetas, categorías y enlaces wiki.</p></div>
+                <div class="card"><h4>🗺️ Mapas</h4><p>Dibuja pines y zonas en mapas con capas, vincúlalos a entradas, exporta a PNG/JPG/SVG.</p></div>
+                <div class="card"><h4>🕸️ Relaciones</h4><p>Construye un grafo interactivo de entidades, añade etiquetas personalizadas y arrastra nodos.</p></div>
+                <div class="card"><h4>⏳ Línea de Tiempo</h4><p>Registra hitos históricos con año, título y descripciones enriquecidas (Markdown).</p></div>
+                <div class="card"><h4>⚙️ Configuración</h4><p>Define el nombre, descripción, portada, fondo del mundo y gestiona las categorías.</p></div>
+            </div>
+            <div class="highlight">
+                <strong>💡 Concepto clave:</strong> Todo está interconectado. Las entradas pueden enlazarse mediante <code>@menciones</code> (estilo wiki) en cualquier campo de texto. Los pines/zonas en los mapas pueden apuntar a entradas. El tablero de relaciones mapea visualmente las conexiones. Los eventos de la línea de tiempo también pueden contener menciones.
+            </div>
+            <p>Todos los datos – incluidas las imágenes – se incrustan dentro del archivo <code>.fwf</code>. Guarda, carga y comparte con un solo archivo.</p>
+        </section>
+
+        <section id="section-interface-es" class="section">
+            <h1 class="section-title">🖥️ Visión general de la interfaz</h1>
+            <p>La interfaz se compone de una barra superior fija y un área de trabajo principal que cambia según la pestaña seleccionada.</p>
+            <h2 class="subsection-title">Barra superior</h2>
+            <ul>
+                <li><strong>Marca / Nombre del mundo</strong> – haz clic para ir a <em>Inicio</em>.</li>
+                <li><strong>Pestañas de navegación</strong> – cambian entre las secciones principales.</li>
+                <li><strong>⚙️ Mundo y Categorías</strong> – abre el modal de configuración.</li>
+                <li><strong>Indicador de estado</strong> – <span class="badge">🟢 Listo</span> (sin cambios pendientes) o <span class="badge" style="background:#f39c12;color:#000;">🟡 Sin guardar</span> (hay modificaciones).</li>
+                <li><strong>📤 Exportar</strong> – abre opciones de exportación (.fwf nativo, Markdown, módulo JS).</li>
+                <li><strong>📂 Cargar .fwf</strong> – carga un archivo de mundo previamente guardado.</li>
+                <li><strong>💾 Guardar .fwf</strong> – guarda el estado actual en un archivo .fwf comprimido.</li>
+                <li><strong>🌐 ES / EN</strong> – cambia el idioma (persistente en el navegador).</li>
+            </ul>
+            <h2 class="subsection-title">Área de trabajo</h2>
+            <p>Cada pestaña presenta un espacio de trabajo diferente:</p>
+            <ul>
+                <li><strong>Inicio</strong> – resumen del mundo, estadísticas y tarjetas de acceso rápido.</li>
+                <li><strong>Compendio</strong> – lista de entradas con buscador/filtros, además de visor/editor.</li>
+                <li><strong>Mapas</strong> – lienzo interactivo con capas, herramientas y panel de propiedades.</li>
+                <li><strong>Relaciones</strong> – grafo de nodos arrastrables con zoom/pan.</li>
+                <li><strong>Línea de Tiempo</strong> – línea vertical con tarjetas de eventos.</li>
+            </ul>
+            <div class="highlight">
+                <strong>🔄 Guardado automático (indicador):</strong> Cualquier modificación marca el estado como “sucio”. La pastilla de estado se vuelve amarilla. No olvides guardar tu trabajo con <code>💾 Guardar .fwf</code> antes de cerrar.
+            </div>
+        </section>
+
+        <section id="section-compendium-es" class="section">
+            <h1 class="section-title">📄 Compendio</h1>
+            <p>El compendio es el corazón de FWF Studio: almacena todas las entradas de tu mundo. Cada entrada tiene título, categoría, etiquetas, una imagen de portada opcional y contenido en Markdown.</p>
+            <h2 class="subsection-title">Lista de entradas</h2>
+            <ul>
+                <li><strong>Barra de búsqueda</strong> – filtra por título o contenido.</li>
+                <li><strong>Filtro por categoría</strong> – desplegable con todas las categorías definidas.</li>
+                <li><strong>Filtro por etiqueta</strong> – escribe una etiqueta para mostrar solo las entradas que la contienen.</li>
+                <li><strong>+ Nueva Entrada</strong> – crea una nueva entrada y abre el editor.</li>
+            </ul>
+            <p>Cada tarjeta muestra: imagen de portada (si existe), icono/nombre de categoría, título, un extracto del contenido y etiquetas cliqueables. Haz clic en una etiqueta para filtrar por ella.</p>
+            <h2 class="subsection-title">Visor</h2>
+            <p>Haz clic en cualquier tarjeta para abrir el visor. Muestra:</p>
+            <ul>
+                <li>Imagen de portada, categoría y título.</li>
+                <li>Contenido Markdown renderizado (con enlaces wiki activos).</li>
+                <li>Etiquetas (cliqueables para filtrar).</li>
+                <li><strong>Relaciones</strong> – sección que muestra todos los enlaces desde/hacia esta entrada en el tablero de relaciones. Haz clic en una relación para saltar a la entrada vinculada.</li>
+            </ul>
+            <p>Botones: <code>⬅ Volver al Compendio</code>, <code>✏️ Editar Entrada</code>, <code>🗑️ Eliminar</code>.</p>
+            <h2 class="subsection-title">Editor</h2>
+            <p>El editor se divide en dos paneles:</p>
+            <ul>
+                <li><strong>Panel izquierdo (edición)</strong>: Título, Categoría, Etiquetas (separadas por comas), botón <code>🖼️ Portada</code> para subir una imagen, y el área de contenido Markdown. El campo de contenido admite <strong>@menciones</strong> (ver sección Avanzado).</li>
+                <li><strong>Panel derecho (vista previa)</strong>: previsualización en vivo del contenido renderizado, con los enlaces wiki activos.</li>
+            </ul>
+            <p>Botones: <code>⬅ Volver al Visor</code> (guarda los cambios) y <code>✔ Guardar Cambios</code> (guarda y permanece en el editor).</p>
+        </section>
+
+        <section id="section-maps-es" class="section">
+            <h1 class="section-title">🗺️ Mapas</h1>
+            <p>El editor de mapas admite múltiples mapas, cada uno con su propia imagen de fondo, capas y objetos (pines y zonas). Los objetos pueden vincularse a entradas del compendio.</p>
+            <h2 class="subsection-title">Gestión de mapas</h2>
+            <ul>
+                <li><strong>Selector de mapa</strong> – cambia entre los mapas existentes.</li>
+                <li><strong>+ Nuevo Mapa</strong> – crea un nuevo mapa (se requiere nombre).</li>
+                <li><strong>🗑️ Eliminar Mapa</strong> – elimina el mapa actual (debe quedar al menos uno).</li>
+            </ul>
+            <h2 class="subsection-title">Capas</h2>
+            <ul>
+                <li>Cada mapa tiene capas (comienza con una capa base). Las capas ayudan a organizar los elementos visuales.</li>
+                <li><strong>Selector de capa activa</strong> – los objetos nuevos se añaden a la capa seleccionada.</li>
+                <li><strong>Lista de capas</strong> – cada capa tiene una casilla de visibilidad y un botón de eliminar (excepto la última).</li>
+                <li><strong>+ Nueva</strong> – añade una capa.</li>
+            </ul>
+            <h2 class="subsection-title">Herramientas</h2>
+            <ul>
+                <li><strong>📍 Pin</strong> – haz clic para añadir un pin en el centro del lienzo (o en la posición actual del cursor). Arrástralo para reposicionarlo.</li>
+                <li><strong>🛑 Zona</strong> – activa el modo de dibujo de polígonos. Haz clic en el lienzo para añadir vértices. Presiona <span class="kbd">Enter</span> para cerrar el polígono. La zona aparece con una etiqueta superpuesta.</li>
+            </ul>
+            <p>Cuando se selecciona un objeto, aparece el panel de <strong>Propiedades</strong>:</p>
+            <ul>
+                <li><strong>Nombre / Texto</strong> – etiqueta mostrada.</li>
+                <li><strong>Para zonas</strong>: tamaño de fuente, color de relleno y opacidad del polígono (el texto permanece totalmente opaco).</li>
+                <li><strong>Vincular a entrada</strong> – desplegable con todas las entradas. Si se vincula, el visor de esa entrada mostrará un marcador <code>📍</code> apuntando a este mapa.</li>
+                <li><strong>🗑️ Quitar</strong> – elimina el objeto seleccionado.</li>
+            </ul>
+            <h2 class="subsection-title">Exportar lienzo</h2>
+            <p>Los botones <code>PNG</code>, <code>JPG</code>, <code>SVG</code> descargan la vista actual del mapa (incluyendo fondo y todas las capas visibles).</p>
+            <div class="highlight">
+                <strong>🖱️ Navegación:</strong> Rueda para hacer zoom, <span class="kbd">Alt</span>+arrastrar para desplazar el lienzo.
+            </div>
+        </section>
+
+        <section id="section-relations-es" class="section">
+            <h1 class="section-title">🕸️ Relaciones</h1>
+            <p>El tablero de relaciones es un lienzo de forma libre donde cada nodo representa una entrada del compendio, y las aristas representan relaciones personalizadas entre ellas.</p>
+            <h2 class="subsection-title">Añadir nodos</h2>
+            <ul>
+                <li>Usa el desplegable en la barra superior (solo se muestran las entradas que aún no están en el tablero).</li>
+                <li>Haz clic en <code>+ Añadir al Tablero</code> – el nodo aparece en el centro del área visible.</li>
+            </ul>
+            <h2 class="subsection-title">Interactuar con los nodos</h2>
+            <ul>
+                <li><strong>Arrastrar</strong> – haz clic y mantén sobre cualquier nodo para reposicionarlo.</li>
+                <li><strong>📖 Ver</strong> – abre un modal con el contenido completo de la entrada (Markdown renderizado, con etiquetas y relaciones).</li>
+                <li><strong>🟢 Vincular</strong> – inicia el modo de enlace. Haz clic en otro nodo para abrir un diálogo donde podrás definir ambas direcciones de la relación (ej. “es aliado de” y “es aliado con”).</li>
+                <li><strong>✖ Quitar</strong> – elimina el nodo y todas sus aristas incidentes del tablero.</li>
+            </ul>
+            <h2 class="subsection-title">Gestionar aristas</h2>
+            <p>Cada arista se dibuja como una línea con punta de flecha. La etiqueta en el punto medio muestra la relación directa. Haz clic en la etiqueta para abrir un modal de edición donde puedes:</p>
+            <ul>
+                <li>Cambiar ambas etiquetas de dirección.</li>
+                <li>Eliminar la arista por completo.</li>
+            </ul>
+            <h2 class="subsection-title">Exportar</h2>
+            <p>Usa los botones <code>PNG</code>, <code>JPG</code>, <code>SVG</code> para capturar todo el tablero (incluyendo todos los nodos y aristas).</p>
+            <div class="highlight">
+                <strong>🖱️ Navegación:</strong> Rueda para hacer zoom, <span class="kbd">Alt</span>+arrastrar para desplazar. Los nodos son independientes del zoom/pan.
+            </div>
+        </section>
+
+        <section id="section-timeline-es" class="section">
+            <h1 class="section-title">⏳ Línea de Tiempo</h1>
+            <p>La línea de tiempo muestra una lista cronológica de hitos históricos. Cada evento tiene un año/fecha (texto libre), un título y una descripción que admite Markdown y enlaces wiki.</p>
+            <ul>
+                <li><strong>+ Nuevo Hito Histórico</strong> – abre un modal para completar los detalles del evento.</li>
+                <li>Los eventos se muestran en tarjetas alternadas (izquierda/derecha) con el año, el título y la descripción renderizada.</li>
+                <li>Cada tarjeta tiene botones <code>✏️ Editar</code> y <code>🗑️ Eliminar</code>.</li>
+            </ul>
+            <p>La línea de tiempo se actualiza en tiempo real y el contador en la página de inicio refleja el número de eventos.</p>
+        </section>
+
+        <section id="section-advanced-es" class="section">
+            <h1 class="section-title">⚙️ Funciones avanzadas</h1>
+            <h2 class="subsection-title">Configuración del mundo</h2>
+            <p>Accede mediante el botón <code>⚙️ Mundo y Categorías</code> en la barra superior. Aquí puedes:</p>
+            <ul>
+                <li>Cambiar el <strong>nombre del mundo</strong> y la <strong>descripción</strong>.</li>
+                <li>Establecer una <strong>imagen de portada</strong> (se muestra en la página de Inicio).</li>
+                <li>Elegir un <strong>tema de fondo</strong> (predefinidos o subida personalizada) y ajustar su opacidad.</li>
+                <li>Gestionar las <strong>categorías</strong> – añadir, eliminar, reordenar iconos, nombres y colores. Debe existir al menos una categoría.</li>
+            </ul>
+            <h2 class="subsection-title">Enlaces wiki (@menciones)</h2>
+            <p>Cualquier campo de texto en Markdown (contenido de entradas, descripción de la línea de tiempo) admite enlaces automáticos a entradas mediante la sintaxis <code>@</code>:</p>
+            <ul>
+                <li><code>@TítuloEntrada</code> – enlaza a la entrada con ese título (no distingue mayúsculas).</li>
+                <li><code>@[idEntrada]</code> – enlace explícito por ID (más robusto).</li>
+            </ul>
+            <p>Mientras escribes <code>@</code> en el editor de entradas, aparece un menú desplegable con las entradas coincidentes. Selecciona una para insertar un enlace <code>@[id]</code> correcto.</p>
+            <p>En la vista renderizada, los enlaces existentes se muestran en <strong>verde</strong> (con un icono <code>📍</code> si la entrada también está en un mapa). Los enlaces rotos aparecen en <strong>naranja</strong> y se pueden hacer clic para crear una nueva entrada con el título sugerido.</p>
+            <p>El sistema normaliza automáticamente las menciones: al guardar una entrada, todas las referencias <code>@Título</code> se convierten a <code>@[id]</code> para mayor estabilidad.</p>
+            <h2 class="subsection-title">Formato de archivo .fwf</h2>
+            <p>El formato nativo es un objeto JSON comprimido con <strong>LZString</strong> y almacenado con extensión <code>.fwf</code>. Incluye:</p>
+            <ul>
+                <li>Metadatos del mundo (nombre, descripción, portada, fondo, opacidad).</li>
+                <li>Todas las categorías.</li>
+                <li>Todas las entradas (con imágenes en base64).</li>
+                <li>Todos los mapas (con imágenes de fondo, capas, objetos – pines/zonas – y sus vínculos).</li>
+                <li>Nodos y aristas del tablero de relaciones.</li>
+                <li>Eventos de la línea de tiempo.</li>
+            </ul>
+            <p>Dado que las imágenes están incrustadas, el archivo puede ser grande, pero es completamente autónomo.</p>
+            <h2 class="subsection-title">Opciones de exportación</h2>
+            <p>Desde el panel <code>📤 Exportar</code> (o el botón de la barra superior) puedes:</p>
+            <ul>
+                <li><strong>Guardar archivo nativo (.fwf)</strong> – igual que el botón principal de guardado.</li>
+                <li><strong>Descargar como Markdown (.md)</strong> – genera un único archivo Markdown con el nombre del mundo, descripción y todas las entradas (con contenido, categoría y etiquetas).</li>
+                <li><strong>Descargar como módulo JavaScript (.js)</strong> – exporta todo el objeto de datos como <code>FWF_WORLD_DATA</code> (o como módulo CommonJS/ES). Útil para integración con otras herramientas.</li>
+            </ul>
+            <h2 class="subsection-title">Cambio de idioma</h2>
+            <p>La interfaz se puede alternar entre <strong>español</strong> e <strong>inglés</strong> mediante el botón <code>🌐 ES/EN</code>. La elección se guarda en el almacenamiento local del navegador.</p>
+            <h2 class="subsection-title">Atajos de teclado y consejos</h2>
+            <ul>
+                <li><span class="kbd">Alt</span> + arrastrar en mapas o en el tablero de relaciones – desplazar.</li>
+                <li><span class="kbd">Rueda</span> – zoom en mapas y tablero de relaciones.</li>
+                <li><span class="kbd">Enter</span> – mientras dibujas una zona en el mapa, cierra el polígono.</li>
+                <li>En el editor de entradas, el autocompletado de <code>@</code> aparece automáticamente; usa las flechas y <span class="kbd">Enter</span> para seleccionar.</li>
+                <li>Haz clic en cualquier etiqueta del compendio para filtrar la lista por esa etiqueta.</li>
+            </ul>
+        </section>
+
+        <div class="footer-note">
+            Created by Cesar Tinoco, support him on Patreon <a href="https://patreon.com/c/CesarTinocoGG" target="_blank" rel="noopener noreferrer">patreon.com/c/CesarTinocoGG</a> · FWF Studio v3.5
+        </div>
+
+    </main>
+
+    <script>
+        const tabTranslations = {
+            en: {
+                overview: '📖 Overview',
+                interface: '🖥️ Interface',
+                compendium: '📄 Compendium',
+                maps: '🗺️ Maps',
+                relations: '🕸️ Relations',
+                timeline: '⏳ Timeline',
+                advanced: '⚙️ Advanced'
+            },
+            es: {
+                overview: '📖 Inicio',
+                interface: '🖥️ Interfaz',
+                compendium: '📄 Compendio',
+                maps: '🗺️ Mapas',
+                relations: '🕸️ Relaciones',
+                timeline: '⏳ Línea de Tiempo',
+                advanced: '⚙️ Avanzado'
+            }
+        };
+
+        let currentLang = 'en';
+        let currentTab = 'overview';
+        const langToggle = document.getElementById('lang-toggle');
+        const navTabs = document.querySelectorAll('.navtab');
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            updateView();
+        }
+
+        function updateView() {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            const targetId = 'section-' + currentTab + '-' + currentLang;
+            const target = document.getElementById(targetId);
+            if (target) target.classList.add('active');
+
+            navTabs.forEach(btn => {
+                const isActive = btn.getAttribute('data-tab') === currentTab;
+                btn.classList.toggle('active', isActive);
+            });
+        }
+
+        function updateNavTexts(lang) {
+            navTabs.forEach(btn => {
+                const tab = btn.getAttribute('data-tab');
+                btn.textContent = tabTranslations[lang][tab] || tab;
+            });
+        }
+
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            langToggle.textContent = lang === 'en' ? '🌐 ES' : '🌐 EN';
+            updateNavTexts(lang);
+            updateView();
+        }
+
+        function toggleLang() {
+            setLanguage(currentLang === 'en' ? 'es' : 'en');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            currentLang = 'en';
+            currentTab = 'overview';
+            langToggle.textContent = '🌐 ES';
+            updateNavTexts('en');
+            updateView();
+        });
+    </script>
+
+</body>
+</html>
