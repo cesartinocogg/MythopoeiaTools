@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythopoeia Maker · Alchemical Gold</title>
+    <style>
+        /* --- RESET & CORE THEME --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cinzel', 'Palatino Linotype', 'Georgia', serif;
+            background: #080706;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            color: #e6d7b8;
+            user-select: none;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: linear-gradient(180deg, #14110e 0%, #0c0a08 100%);
+            padding: 0.6rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #4a3818;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            flex-shrink: 0;
+            z-index: 20;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            background: linear-gradient(135deg, #ffd700, #d4af37, #aa7c11);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* --- BUTTONS & CONTROLS --- */
+        .btn {
+            background: #1a1612;
+            border: 1px solid #5e471f;
+            padding: 0.4rem 0.9rem;
+            border-radius: 4px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #d4af37;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn:hover {
+            background: #2a221b;
+            border-color: #ffd700;
+            color: #fff;
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37, #996f13);
+            color: #080706;
+            border: 1px solid #ffd700;
+            font-weight: 700;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #ffd700, #b8861b);
+            color: #000;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #1e3a1e, #0f230f);
+            color: #50c878;
+            border: 1px solid #2e6f40;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #2e6f40, #1e3a1e);
+            color: #fff;
+            border-color: #50c878;
+            box-shadow: 0 0 15px rgba(80, 200, 120, 0.4);
+        }
+
+        .btn-danger {
+            border-color: #7f1d1d;
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: #450a0a;
+            border-color: #f87171;
+            color: #fff;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #14110e;
+            min-width: 180px;
+            border: 1px solid #5e471f;
+            border-radius: 4px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.9);
+            z-index: 100;
+            margin-top: 4px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1rem;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.8rem;
+            color: #e6d7b8;
+            cursor: pointer;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-item:hover {
+            background: #2a221b;
+            color: #ffd700;
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 240px;
+            background: #0f0d0a;
+            border-right: 1px solid #3d2e14;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 15;
+        }
+
+        .sidebar.collapsed {
+            width: 0;
+            border-right: none;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #3d2e14;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #a38d66;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header .count {
+            background: #241c12;
+            border: 1px solid #4a3818;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #ffd700;
+        }
+
+        .entry-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0.5rem 0;
+        }
+
+        .entry-item {
+            padding: 0.6rem 1rem;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: #c4b49d;
+            gap: 0.5rem;
+        }
+
+        .entry-item:hover {
+            background: #1c1712;
+            color: #fff;
+        }
+
+        .entry-item.active {
+            background: #241d14;
+            border-left-color: #ffd700;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .entry-item .title-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            overflow: hidden;
+        }
+
+        .entry-item .title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- BOARD WRAPPER & CANVAS --- */
+        .board-wrapper {
+            flex: 1;
+            background: radial-gradient(circle at 50% 50%, #171410 0%, #080706 100%);
+            overflow: hidden;
+            position: relative;
+            cursor: grab;
+        }
+
+        .board-wrapper:active {
+            cursor: grabbing;
+        }
+
+        .board-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(212, 175, 55, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(212, 175, 55, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* 
+        .board-container {
+            width: 100000px;
+            height: 100000px;
+            transform-origin: 0 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* --- PASSAGE NODES --- */
+        .passage-node {
+            position: absolute;
+            background: #14110e;
+            border: 1px solid #634b22;
+            border-radius: 6px;
+            min-width: 180px;
+            max-width: 240px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9), inset 0 0 15px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            z-index: 2;
+        }
+
+        .passage-node:hover {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3), inset 0 0 10px rgba(212, 175, 55, 0.1);
+            z-index: 5;
+        }
+
+        .passage-node.selected {
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
+            z-index: 6;
+        }
+
+        .start-indicator {
+            background: linear-gradient(90deg, #996f13, #ffd700, #996f13);
+            color: #080706;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-align: center;
+            padding: 0.2rem 0;
+            letter-spacing: 0.1em;
+            border-radius: 4px 4px 0 0;
+            text-transform: uppercase;
+            box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .node-header {
+            padding: 0.5rem 0.8rem;
+            background: linear-gradient(180deg, #1f1a14 0%, #14110e 100%);
+            border-bottom: 1px solid #3d2e14;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .node-emoji {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .node-title {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #f3e5ab;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            letter-spacing: 0.03em;
+        }
+
+        .node-body-preview {
+            padding: 0.6rem 0.8rem;
+            font-size: 0.75rem;
+            color: #a38d66;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.4;
+            max-height: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .node-body-preview::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, #14110e);
+        }
+
+        .node-decisions {
+            border-top: 1px dashed #3d2e14;
+            background: #0d0b09;
+            border-radius: 0 0 5px 5px;
+            overflow: hidden;
+        }
+
+        .node-decision-item {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.7rem;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #d4af37;
+            border-bottom: 1px solid #1f1a14;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.15s;
+        }
+
+        .node-decision-item:last-child {
+            border-bottom: none;
+        }
+
+        .node-decision-item:hover {
+            background: #1c1712;
+            color: #fff;
+        }
+
+        .node-decision-item span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 160px;
+        }
+
+        /* --- BOARD STICKERS / EMOJIS --- */
+        .board-sticker {
+            position: absolute;
+            font-size: 2.5rem;
+            cursor: grab;
+            user-select: none;
+            z-index: 3;
+            transition: transform 0.1s;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.8));
+        }
+
+        .board-sticker:hover {
+            transform: scale(1.15);
+            z-index: 7;
+        }
+
+        .board-sticker:active {
+            cursor: grabbing;
+        }
+
+        /* --- SVG CONNECTIONS --- */
+        .connections-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .connections-svg path {
+            fill: none;
+            pointer-events: stroke;
+            cursor: pointer;
+            transition: stroke 0.15s, stroke-width 0.15s;
+        }
+
+        .connections-svg path:hover {
+            stroke: #ffd700;
+            stroke-width: 3.5px;
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
+        }
+
+        /* --- STICKER PALETTE MODAL --- */
+        .palette-drawer {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: #14110e;
+            border: 1px solid #ffd700;
+            border-radius: 6px;
+            padding: 1rem;
+            width: 280px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            z-index: 50;
+            display: none;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .palette-drawer.open {
+            display: grid;
+        }
+
+        .palette-emoji {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 0.4rem;
+            cursor: grab;
+            border-radius: 4px;
+            transition: background 0.15s, transform 0.15s;
+        }
+
+        .palette-emoji:hover {
+            background: #2a221b;
+            transform: scale(1.2);
+        }
+
+        /* --- SIDE PANEL (EDITOR) --- */
+        .side-panel {
+            position: fixed;
+            top: 0;
+            right: -650px;
+            width: 600px;
+            max-width: 90vw;
+            height: 100%;
+            background: #120f0c;
+            border-left: 1px solid #5e471f;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-panel.open {
+            right: 0;
+        }
+
+        .side-panel-header {
+            padding: 1rem 1.5rem;
+            background: #1a1612;
+            border-bottom: 1px solid #4a3818;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .panel-title-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+        }
+
+        .panel-emoji-select {
+            background: #080706;
+            border: 1px solid #5e471f;
+            color: #fff;
+            padding: 0.4rem;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .panel-color-select {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #5e471f;
+            border-radius: 4px;
+            background: #080706;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .panel-title input {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: 1px solid #4a3818;
+            border-radius: 4px;
+            padding: 0.4rem 0.8rem;
+            background: #080706;
+            color: #ffd700;
+            width: 100%;
+        }
+
+        .panel-title input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .panel-body {
+            display: flex;
+            flex: 1;
+            overflow-y: auto;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .editor-section-title {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #a38d66;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-editor {
+            position: relative;
+        }
+
+        .panel-editor textarea {
+            width: 100%;
+            height: 180px;
+            font-family: 'Segoe UI', monospace;
+            font-size: 0.9rem;
+            padding: 0.8rem;
+            border: 1px solid #4a3818;
+            border-radius: 4px;
+            resize: vertical;
+            outline: none;
+            background: #080706;
+            color: #e6d7b8;
+            line-height: 1.6;
+        }
+
+        .panel-editor textarea:focus {
+            border-color: #ffd700;
+        }
+
+        /* CORRECCIÓN 2: Estilos del menú desplegable para autocompletar @menciones */
+        .mention-dropdown {
+            position: absolute;
+            background: #181410;
+            border: 1px solid #ffd700;
+            border-radius: 6px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.9), 0 0 15px rgba(212, 175, 55, 0.2);
+            z-index: 2000;
+            max-height: 180px;
+            overflow-y: auto;
+            min-width: 220px;
+            max-width: 300px;
+            display: none;
+            flex-direction: column;
+            padding: 0.3rem 0;
+        }
+
+        .mention-dropdown.open {
+            display: flex;
+        }
+
+        .mention-item {
+            padding: 0.5rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: #e6d7b8;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .mention-item:hover, .mention-item.selected {
+            background: #2a221b;
+            color: #ffd700;
+        }
+
+        .mention-item .mention-emoji {
+            font-size: 1.1rem;
+        }
+
+        .mention-item .mention-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mention-item .mention-title {
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mention-item .mention-slug {
+            font-size: 0.75rem;
+            color: #a38d66;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- DECISIONS EDITOR --- */
+        .decisions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .decision-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            background: #161310;
+            padding: 0.6rem;
+            border: 1px solid #3d2e14;
+            border-radius: 4px;
+        }
+
+        .decision-row input[type="text"] {
+            flex: 1;
+            background: #080706;
+            border: 1px solid #4a3818;
+            padding: 0.4rem;
+            color: #e6d7b8;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+
+        .decision-row select {
+            background: #080706;
+            border: 1px solid #4a3818;
+            color: #d4af37;
+            padding: 0.4rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            max-width: 180px;
+        }
+
+        /* --- PREVIEW BOX --- */
+        .panel-preview {
+            padding: 1rem;
+            background: #080706;
+            border: 1px solid #3d2e14;
+            border-radius: 4px;
+            line-height: 1.7;
+            font-size: 0.9rem;
+            color: #c4b49d;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .panel-preview .mention-link {
+            color: #ffd700;
+            font-weight: 600;
+            background: #241c12;
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            border: 1px solid #5e471f;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .panel-preview .mention-link:hover {
+            background: #3d2e14;
+            text-decoration: underline;
+        }
+
+        .panel-footer {
+            padding: 1rem 1.5rem;
+            background: #1a1612;
+            border-top: 1px solid #4a3818;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(2px);
+            z-index: 999;
+            display: none;
+        }
+
+        .panel-overlay.open {
+            display: block;
+        }
+
+        /* --- ZOOM & HUD --- */
+        .hud-container {
+            position: absolute;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .zoom-info {
+            background: #14110e;
+            border: 1px solid #5e471f;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.75rem;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1a1612;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+            padding: 0.6rem 1.5rem;
+            border-radius: 4px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        /* --- SCROLLBARS --- */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080706;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3d2e14;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5e471f;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-title">
+            <button class="btn" id="toggleSidebarBtn" title="Toggle Sidebar">☰</button>
+            <h1>✦ MYTHOPOEIA</h1>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-success" id="testPlayBtn">▶️ Test Play</button>
+            <button class="btn btn-primary" id="newPassageBtn">➕ New Passage</button>
+            
+            <div class="dropdown">
+                <button class="btn">📜 Export ▾</button>
+                <div class="dropdown-content">
+                    <div class="dropdown-item" id="exportHtmlBtn">🎮 Playable Game (.HTML)</div>
+                    <div class="dropdown-item" id="exportMdBtn">📝 Markdown (.MD)</div>
+                    <div class="dropdown-item" id="exportMermaidBtn">🧜‍♂️ Mermaid Diagram</div>
+                    <div class="dropdown-item" id="exportPngBtn">🖼️ PNG Image</div>
+                </div>
+            </div>
+
+            <button class="btn" id="openPaletteBtn">✨ Icons & Emojis</button>
+            <button class="btn" id="saveFmmBtn">💾 Save .FMM</button>
+            <button class="btn" id="loadFmmBtn">📂 Load .FMM</button>
+            <input type="file" id="fileInput" class="file-input-hidden" accept=".fmm">
+        </div>
+    </header>
+
+    <div class="palette-drawer" id="paletteDrawer">
+        <div class="palette-emoji" draggable="true">🐉</div>
+        <div class="palette-emoji" draggable="true">👑</div>
+        <div class="palette-emoji" draggable="true">⚔️</div>
+        <div class="palette-emoji" draggable="true">🛡️</div>
+        <div class="palette-emoji" draggable="true">🏰</div>
+        <div class="palette-emoji" draggable="true">🧙‍♂️</div>
+        <div class="palette-emoji" draggable="true">🧝‍♀️</div>
+        <div class="palette-emoji" draggable="true">📜</div>
+        <div class="palette-emoji" draggable="true">🔮</div>
+        <div class="palette-emoji" draggable="true">💎</div>
+        <div class="palette-emoji" draggable="true">🗝️</div>
+        <div class="palette-emoji" draggable="true">💀</div>
+        <div class="palette-emoji" draggable="true">🔥</div>
+        <div class="palette-emoji" draggable="true">🌲</div>
+        <div class="palette-emoji" draggable="true">🌙</div>
+        <div class="palette-emoji" draggable="true">⭐</div>
+        <div class="palette-emoji" draggable="true">⚡</div>
+        <div class="palette-emoji" draggable="true">🧪</div>
+        <div class="palette-emoji" draggable="true">⚓</div>
+        <div class="palette-emoji" draggable="true">🐺</div>
+    </div>
+
+    <div class="main">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span>📖 Passages</span>
+                <span class="count" id="entryCount">0</span>
+            </div>
+            <div class="entry-list" id="entryList"></div>
+            <div style="padding: 0.8rem 1rem; border-top: 1px solid #3d2e14; background: #14110e; font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.75rem; color: #a38d66; line-height: 1.4; flex-shrink: 0;">
+                Created by <strong style="color: #e6d7b8;">Cesar Tinoco</strong>, support him on 
+                <a href="https://patreon.com/c/CesarTinocoGG" target="_blank" style="color: #ffd700; text-decoration: none; font-weight: bold;">Patreon</a>
+                <a href="https://cesartinocogg.github.io/MythopoeiaTools/mm-manual.html" target="_blank" style="color: #ffd700; text-decoration: none; font-weight: bold;">MANUAL</a>
+            </div>
+        </aside>
+
+        <div class="board-wrapper" id="boardWrapper">
+            <div class="board-grid"></div>
+            <div class="board-container" id="boardContainer">
+                <svg class="connections-svg" id="connectionsSvg"></svg>
+            </div>
+            
+            <div class="hud-container">
+                <button class="btn" id="centerBoardBtn">🎯 Center Board</button>
+                <div class="zoom-info" id="zoomInfo">Zoom: 100%</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel-overlay" id="panelOverlay"></div>
+    <div class="side-panel" id="sidePanel">
+        <div class="side-panel-header">
+            <div class="panel-title-group">
+                <select class="panel-emoji-select" id="panelEmojiSelect">
+                    <option value="📜">📜</option>
+                    <option value="⚔️">⚔️</option>
+                    <option value="👑">👑</option>
+                    <option value="🗝️">🗝️</option>
+                    <option value="💀">💀</option>
+                    <option value="🔥">🔥</option>
+                    <option value="🌲">🌲</option>
+                    <option value="🏰">🏰</option>
+                    <option value="🐉">🐉</option>
+                    <option value="💎">💎</option>
+                </select>
+                <input type="color" class="panel-color-select" id="panelColorSelect" value="#634b22">
+                <div class="panel-title" style="flex:1;">
+                    <input type="text" id="panelTitleInput" placeholder="Passage Title">
+                </div>
+            </div>
+            <button class="btn" id="panelCloseBtn">✕</button>
+        </div>
+        
+        <div class="panel-body">
+            <div>
+                <div class="editor-section-title"><span>Passage Content</span></div>
+                <div class="panel-editor">
+                    <textarea id="panelBodyEditor" placeholder="Escribe tu historia en Markdown... Escribe @ para autocompletar y vincular pasajes."></textarea>
+                    <div class="mention-dropdown" id="mentionDropdown"></div>
+                </div>
+            </div>
+
+            <div>
+                <div class="editor-section-title">
+                    <span>Decisions / Choices</span>
+                    <button class="btn" id="addDecisionBtn" style="padding:0.2rem 0.5rem; font-size:0.7rem;">+ Add Decision</button>
+                </div>
+                <div class="decisions-container" id="decisionsContainer"></div>
+            </div>
+
+            <div>
+                <div class="editor-section-title"><span>Live Preview</span></div>
+                <div class="panel-preview" id="panelPreview"></div>
+            </div>
+        </div>
+
+        <div class="panel-footer">
+            <button class="btn btn-danger" id="panelDeleteBtn">🗑️ Delete</button>
+            <div style="display:flex; gap:0.5rem;">
+                <button class="btn" id="focusPassageBtn">🎯 Center on Board</button>
+                <button class="btn btn-primary" id="panelSaveBtn">💾 Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            /* --- STATE MANAGEMENT --- */
+            let passages = [];
+            let stickers = [];
+            let selectedId = null;
+            let panelOpen = false;
+            let panelPassageId = null;
+            let scale = 1;
+            let panX = 0, panY = 0;
+            let isDraggingBoard = false;
+            let dragStartX, dragStartY, dragStartPanX, dragStartPanY;
+
+            /* Estado para Autocompletado @ */
+            let mentionMatches = [];
+            let mentionSelectedIndex = 0;
+
+            /* --- DOM REFERENCES --- */
+            const boardWrapper = document.getElementById('boardWrapper');
+            const boardContainer = document.getElementById('boardContainer');
+            const connectionsSvg = document.getElementById('connectionsSvg');
+            const entryListEl = document.getElementById('entryList');
+            const entryCountEl = document.getElementById('entryCount');
+            const zoomInfo = document.getElementById('zoomInfo');
+            const sidebar = document.getElementById('sidebar');
+
+            const sidePanel = document.getElementById('sidePanel');
+            const panelOverlay = document.getElementById('panelOverlay');
+            const panelTitleInput = document.getElementById('panelTitleInput');
+            const panelEmojiSelect = document.getElementById('panelEmojiSelect');
+            const panelColorSelect = document.getElementById('panelColorSelect');
+            const panelBodyEditor = document.getElementById('panelBodyEditor');
+            const mentionDropdown = document.getElementById('mentionDropdown');
+            const panelPreview = document.getElementById('panelPreview');
+            const decisionsContainer = document.getElementById('decisionsContainer');
+            
+            const panelCloseBtn = document.getElementById('panelCloseBtn');
+            const panelSaveBtn = document.getElementById('panelSaveBtn');
+            const panelDeleteBtn = document.getElementById('panelDeleteBtn');
+            const focusPassageBtn = document.getElementById('focusPassageBtn');
+            const addDecisionBtn = document.getElementById('addDecisionBtn');
+
+            const newPassageBtn = document.getElementById('newPassageBtn');
+            const saveFmmBtn = document.getElementById('saveFmmBtn');
+            const loadFmmBtn = document.getElementById('loadFmmBtn');
+            const fileInput = document.getElementById('fileInput');
+            const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+            const centerBoardBtn = document.getElementById('centerBoardBtn');
+            const openPaletteBtn = document.getElementById('openPaletteBtn');
+            const paletteDrawer = document.getElementById('paletteDrawer');
+
+            const exportHtmlBtn = document.getElementById('exportHtmlBtn');
+            const exportMdBtn = document.getElementById('exportMdBtn');
+            const exportMermaidBtn = document.getElementById('exportMermaidBtn');
+            const exportPngBtn = document.getElementById('exportPngBtn');
+            const testPlayBtn = document.getElementById('testPlayBtn');
+            const toastEl = document.getElementById('toast');
+
+            /* --- UTILITIES --- */
+            function generateId() { 
+                return 'id_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5); 
+            }
+
+            function showToast(msg, duration = 2500) {
+                toastEl.textContent = msg;
+                toastEl.classList.add('show');
+                clearTimeout(toastEl._timer);
+                toastEl._timer = setTimeout(() => toastEl.classList.remove('show'), duration);
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            function slugify(text) {
+                return text.trim().toLowerCase()
+                    .replace(/[^a-z0-9 ]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/^-|-$/g, '');
+            }
+
+            /* --- STORAGE & DATA INIT --- */
+            function saveToStorage() {
+                localStorage.setItem('mythopoeia_passages', JSON.stringify(passages));
+                localStorage.setItem('mythopoeia_stickers', JSON.stringify(stickers));
+            }
+
+            function loadFromStorage() {
+                try {
+                    const pData = localStorage.getItem('mythopoeia_passages');
+                    const sData = localStorage.getItem('mythopoeia_stickers');
+                    if (pData) {
+                        const parsed = JSON.parse(pData);
+                        if (Array.isArray(parsed) && parsed.length > 0 && !isNaN(parsed[0].x)) {
+                            passages = parsed;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                    if (sData) stickers = JSON.parse(sData) || [];
+                    return passages.length > 0;
+                } catch(e) { return false; }
+            }
+
+            function initDefaultData() {
+                const id0 = generateId();
+                const id1 = generateId();
+                const id2 = generateId();
+                const id3 = generateId();
+
+                passages = [
+                    {
+                        id: id0,
+                        title: 'Prologue: The Awakening',
+                        slug: 'prologue-the-awakening',
+                        emoji: '⭐',
+                        color: '#ffd700',
+                        body: 'This passage marks the absolute beginning of your visual novel. From here, the threads of fate extend into the realm of shadows and golden alchemy.\n\nYour eyes open to a misty courtyard, where destiny awaits.',
+                        x: 50080, y: 50150,
+                        decisions: [
+                            { text: 'Step toward the grand entrance', targetId: id1 }
+                        ]
+                    },
+                    {
+                        id: id1,
+                        title: 'The Obsidian Gate',
+                        slug: 'the-obsidian-gate',
+                        emoji: '🏰',
+                        color: '#d4af37',
+                        body: 'You stand before a colossal gate wrought from black glass. An inscription reads: *Seek the @throne-room if you dare*.',
+                        x: 50380, y: 50150,
+                        decisions: [
+                            { text: 'Enter the courtyard', targetId: id2 },
+                            { text: 'Inspect the ancient runes', targetId: id3 }
+                        ]
+                    },
+                    {
+                        id: id2,
+                        title: 'Throne Room',
+                        slug: 'throne-room',
+                        emoji: '👑',
+                        color: '#aa7c11',
+                        body: 'Golden statues line the hall. A spectral monarch watches your step in eternal silence.',
+                        x: 50750, y: 50060,
+                        decisions: []
+                    },
+                    {
+                        id: id3,
+                        title: 'Rune Inscription',
+                        slug: 'rune-inscription',
+                        emoji: '📜',
+                        color: '#634b22',
+                        body: 'The runes pulse with a faint golden light, speaking of an alchemical secret buried deep beneath the citadel.',
+                        x: 50750, y: 50260,
+                        decisions: [
+                            { text: 'Return to gate', targetId: id1 }
+                        ]
+                    }
+                ];
+                saveToStorage();
+            }
+
+            /* --- BOARD RENDERING --- */
+            function renderBoard() {
+                boardContainer.querySelectorAll('.passage-node, .board-sticker').forEach(el => el.remove());
+
+                stickers.forEach(st => {
+                    const el = document.createElement('div');
+                    el.className = 'board-sticker';
+                    el.textContent = st.emoji;
+                    el.style.left = st.x + 'px';
+                    el.style.top = st.y + 'px';
+                    el.dataset.id = st.id;
+                    el.addEventListener('mousedown', onStickerMouseDown);
+                    boardContainer.appendChild(el);
+                });
+
+                passages.forEach((p, idx) => {
+                    const node = document.createElement('div');
+                    node.className = `passage-node ${p.id === selectedId ? 'selected' : ''}`;
+                    node.dataset.id = p.id;
+                    node.style.left = p.x + 'px';
+                    node.style.top = p.y + 'px';
+                    node.style.borderColor = p.color || '#634b22';
+
+                    let startIndicatorHtml = '';
+                    if (idx === 0) {
+                        startIndicatorHtml = `<div class="start-indicator">✦ Starting Passage ✦</div>`;
+                    }
+
+                    let decisionsHtml = '';
+                    if (p.decisions && p.decisions.length > 0) {
+                        decisionsHtml = `<div class="node-decisions">` + 
+                            p.decisions.map(d => `<div class="node-decision-item"><span>⚔️ ${escapeHtml(d.text)}</span><span>➔</span></div>`).join('') + 
+                        `</div>`;
+                    }
+
+                    node.innerHTML = `
+                        ${startIndicatorHtml}
+                        <div class="node-header" style="border-bottom-color: ${p.color || '#3d2e14'}">
+                            <span class="node-emoji">${p.emoji || '📜'}</span>
+                            <span class="node-title">${escapeHtml(p.title)}</span>
+                        </div>
+                        <div class="node-body-preview">${escapeHtml(p.body)}</div>
+                        ${decisionsHtml}
+                    `;
+
+                    node.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectPassage(p.id);
+                    });
+
+                    node.addEventListener('dblclick', (e) => {
+                        e.stopPropagation();
+                        openPanel(p.id);
+                    });
+
+                    node.addEventListener('mousedown', onNodeMouseDown);
+                    boardContainer.appendChild(node);
+                });
+
+                renderList();
+                renderConnections();
+                updateCount();
+            }
+
+            function selectPassage(id) {
+                selectedId = id;
+                document.querySelectorAll('.passage-node').forEach(node => {
+                    node.classList.toggle('selected', node.dataset.id === id);
+                });
+                renderList();
+            }
+
+            function updateCount() {
+                entryCountEl.textContent = passages.length;
+            }
+
+            function renderList() {
+                entryListEl.innerHTML = passages.map((p, idx) => `
+                    <div class="entry-item ${p.id === selectedId ? 'active' : ''}" data-id="${p.id}">
+                        <div class="title-box">
+                            <span>${p.emoji || '📜'}</span>
+                            <span class="title">${idx === 0 ? '✦ ' : ''}${escapeHtml(p.title)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                entryListEl.querySelectorAll('.entry-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        selectPassage(item.dataset.id);
+                        centerOnPassage(item.dataset.id);
+                    });
+                    item.addEventListener('dblclick', () => openPanel(item.dataset.id));
+                });
+            }
+
+            /* --- CONNECTIONS & GEOMETRY --- */
+            function renderConnections() {
+                connectionsSvg.innerHTML = `
+                    <defs>
+                        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#aa7c11" />
+                        </marker>
+                        <marker id="arrow-hover" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#ffd700" />
+                        </marker>
+                    </defs>
+                `;
+
+                passages.forEach(source => {
+                    if (!source.decisions) return;
+                    const sourceEl = boardContainer.querySelector(`.passage-node[data-id="${source.id}"]`);
+                    if (!sourceEl) return;
+
+                    source.decisions.forEach((dec, idx) => {
+                        if (!dec.targetId) return;
+                        const target = passages.find(p => p.id === dec.targetId);
+                        if (!target) return;
+                        const targetEl = boardContainer.querySelector(`.passage-node[data-id="${target.id}"]`);
+                        if (!targetEl) return;
+
+                        const decisionRows = sourceEl.querySelectorAll('.node-decision-item');
+                        const rowEl = decisionRows[idx] || sourceEl;
+
+                        const x1 = source.x + sourceEl.offsetWidth;
+                        const y1 = source.y + rowEl.offsetTop + (rowEl.offsetHeight / 2);
+
+                        const targetCenterY = target.y + (targetEl.offsetHeight / 2);
+                        let x2 = target.x;
+                        if (x1 > target.x + targetEl.offsetWidth) {
+                            x2 = target.x + targetEl.offsetWidth;
+                        }
+
+                        const dx = Math.abs(x2 - x1) * 0.5;
+                        const cp1x = x1 + dx;
+                        const cp1y = y1;
+                        const cp2x = x2 - dx;
+                        const cp2y = targetCenterY;
+
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.setAttribute('d', `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${targetCenterY}`);
+                        path.setAttribute('stroke', '#aa7c11');
+                        path.setAttribute('stroke-width', '2px');
+                        path.setAttribute('marker-end', 'url(#arrow)');
+
+                        path.addEventListener('mouseenter', function() {
+                            this.setAttribute('stroke', '#ffd700');
+                            this.setAttribute('marker-end', 'url(#arrow-hover)');
+                        });
+                        path.addEventListener('mouseleave', function() {
+                            this.setAttribute('stroke', '#aa7c11');
+                            this.setAttribute('marker-end', 'url(#arrow)');
+                        });
+
+                        connectionsSvg.appendChild(path);
+                    });
+                });
+            }
+
+            /* --- DRAGGING NODES & STICKERS --- */
+            function onNodeMouseDown(e) {
+                if (e.button !== 0) return;
+                e.stopPropagation();
+                
+                const node = e.currentTarget;
+                const id = node.dataset.id;
+                selectPassage(id);
+
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const origX = parseFloat(node.style.left);
+                const origY = parseFloat(node.style.top);
+
+                function onMouseMove(ev) {
+                    const dx = (ev.clientX - startX) / scale;
+                    const dy = (ev.clientY - startY) / scale;
+                    const newX = origX + dx;
+                    const newY = origY + dy;
+
+                    node.style.left = newX + 'px';
+                    node.style.top = newY + 'px';
+
+                    const p = passages.find(p => p.id === id);
+                    if (p) { p.x = newX; p.y = newY; }
+                    renderConnections();
+                }
+
+                function onMouseUp() {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                    saveToStorage();
+                }
+
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+            }
+
+            function onStickerMouseDown(e) {
+                if (e.button !== 0) return;
+                e.stopPropagation();
+                const el = e.currentTarget;
+                const id = el.dataset.id;
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const origX = parseFloat(el.style.left);
+                const origY = parseFloat(el.style.top);
+
+                function onMouseMove(ev) {
+                    el.style.left = (origX + (ev.clientX - startX) / scale) + 'px';
+                    el.style.top = (origY + (ev.clientY - startY) / scale) + 'px';
+                    const st = stickers.find(s => s.id === id);
+                    if (st) { st.x = parseFloat(el.style.left); st.y = parseFloat(el.style.top); }
+                }
+
+                function onMouseUp() {
+                    window.removeEventListener('mousemove', onMouseMove);
+                    window.removeEventListener('mouseup', onMouseUp);
+                    saveToStorage();
+                }
+
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+            }
+
+            /* --- BOARD PAN & ZOOM --- */
+            /* CORRECCIÓN 1: Aplicar primero translate y luego scale para que coincida con las fórmulas */
+            function applyTransform() {
+                boardContainer.style.transform = `scale(${scale}) translate(${panX}px, ${panY}px)`;
+                zoomInfo.textContent = `Zoom: ${Math.round(scale * 100)}%`;
+            }
+
+            function centerBoard() {
+                if (passages.length === 0) { panX = -50000; panY = -50000; scale = 1; applyTransform(); return; }
+                const minX = Math.min(...passages.map(p => p.x));
+                const maxX = Math.max(...passages.map(p => p.x + 220));
+                const minY = Math.min(...passages.map(p => p.y));
+                const maxY = Math.max(...passages.map(p => p.y + 150));
+
+                const w = maxX - minX;
+                const h = maxY - minY;
+                const rect = boardWrapper.getBoundingClientRect();
+
+                scale = Math.min((rect.width - 100) / w, (rect.height - 100) / h, 1);
+                panX = (rect.width / scale - w) / 2 - minX;
+                panY = (rect.height / scale - h) / 2 - minY;
+                applyTransform();
+            }
+
+            function centerOnPassage(id) {
+                const p = passages.find(p => p.id === id);
+                if (!p) return;
+                const rect = boardWrapper.getBoundingClientRect();
+                panX = (rect.width / (2 * scale)) - p.x - 110;
+                panY = (rect.height / (2 * scale)) - p.y - 75;
+                applyTransform();
+            }
+
+            boardWrapper.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.08 : 0.08;
+                const newScale = Math.min(Math.max(scale + delta, 0.3), 2.5);
+                const rect = boardWrapper.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+
+                panX -= (mx / scale - mx / newScale);
+                panY -= (my / scale - my / newScale);
+                scale = newScale;
+                applyTransform();
+            }, { passive: false });
+
+            boardWrapper.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.passage-node, .board-sticker')) return;
+                if (e.button === 0 || e.button === 1) {
+                    isDraggingBoard = true;
+                    dragStartX = e.clientX;
+                    dragStartY = e.clientY;
+                    dragStartPanX = panX;
+                    dragStartPanY = panY;
+                    boardWrapper.style.cursor = 'grabbing';
+                }
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (isDraggingBoard) {
+                    panX = dragStartPanX + (e.clientX - dragStartX) / scale;
+                    panY = dragStartPanY + (e.clientY - dragStartY) / scale;
+                    applyTransform();
+                }
+            });
+
+            window.addEventListener('mouseup', () => {
+                isDraggingBoard = false;
+                boardWrapper.style.cursor = 'grab';
+            });
+
+            /* --- SIDE PANEL & DECISIONS EDITOR --- */
+            function openPanel(id) {
+                const p = passages.find(p => p.id === id);
+                if (!p) return;
+                panelPassageId = id;
+                panelTitleInput.value = p.title;
+                panelEmojiSelect.value = p.emoji || '📜';
+                panelColorSelect.value = p.color || '#634b22';
+                panelBodyEditor.value = p.body;
+                
+                renderDecisionsEditor(p.decisions || []);
+                updatePreview();
+                closeMentionDropdown();
+                sidePanel.classList.add('open');
+                panelOverlay.classList.add('open');
+                panelOpen = true;
+            }
+
+            function closePanel() {
+                sidePanel.classList.remove('open');
+                panelOverlay.classList.remove('open');
+                panelOpen = false;
+                panelPassageId = null;
+                closeMentionDropdown();
+                renderBoard();
+            }
+
+            function renderDecisionsEditor(decisions) {
+                decisionsContainer.innerHTML = '';
+                decisions.forEach((dec, idx) => {
+                    const row = document.createElement('div');
+                    row.className = 'decision-row';
+                    
+                    const options = passages.map(p => 
+                        `<option value="${p.id}" ${p.id === dec.targetId ? 'selected' : ''}>${p.emoji || ''} ${escapeHtml(p.title)}</option>`
+                    ).join('');
+
+                    row.innerHTML = `
+                        <input type="text" value="${escapeHtml(dec.text)}" placeholder="Decision text..." class="dec-text-input">
+                        <select class="dec-target-select">
+                            <option value="">-- No Target --</option>
+                            ${options}
+                            <option value="NEW_PASSAGE">➕ Create New...</option>
+                        </select>
+                        <button class="btn btn-danger dec-del-btn" style="padding:0.3rem 0.5rem;">✕</button>
+                    `;
+
+                    const selectEl = row.querySelector('.dec-target-select');
+                    selectEl.addEventListener('change', (e) => {
+                        if (e.target.value === 'NEW_PASSAGE') {
+                            const newP = createPassage('New Destination', '', passages.find(p=>p.id===panelPassageId).x + 300, passages.find(p=>p.id===panelPassageId).y + (idx*100));
+                            e.target.innerHTML = passages.map(p => `<option value="${p.id}" ${p.id === newP.id ? 'selected' : ''}>${p.emoji || ''} ${escapeHtml(p.title)}</option>`).join('');
+                            e.target.value = newP.id;
+                        }
+                    });
+
+                    row.querySelector('.dec-del-btn').addEventListener('click', () => {
+                        row.remove();
+                    });
+
+                    decisionsContainer.appendChild(row);
+                });
+            }
+
+            addDecisionBtn.addEventListener('click', () => {
+                const decs = getDecisionsFromEditor();
+                decs.push({ text: 'New Choice', targetId: '' });
+                renderDecisionsEditor(decs);
+            });
+
+            function getDecisionsFromEditor() {
+                const rows = decisionsContainer.querySelectorAll('.decision-row');
+                const decs = [];
+                rows.forEach(row => {
+                    const text = row.querySelector('.dec-text-input').value.trim();
+                    const targetId = row.querySelector('.dec-target-select').value;
+                    if (text) decs.push({ text, targetId: targetId === 'NEW_PASSAGE' ? '' : targetId });
+                });
+                return decs;
+            }
+
+            function updatePreview() {
+                let html = panelBodyEditor.value || '';
+                html = html.replace(/@([a-zA-Z0-9\-]+)/g, (match, slug) => {
+                    const target = passages.find(p => p.slug === slug);
+                    if (target) {
+                        return `<a href="#" class="mention-link" data-id="${target.id}">${target.emoji || '📜'} @${slug}</a>`;
+                    }
+                    return match;
+                });
+                html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                html = html.replace(/\n\n/g, '</p><p>');
+                panelPreview.innerHTML = `<p>${html}</p>`;
+
+                panelPreview.querySelectorAll('.mention-link').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openPanel(link.dataset.id);
+                    });
+                });
+            }
+
+            /* --- CORRECCIÓN 2: LÓGICA DE AUTOCOMPLETADO ESTILO RED SOCIAL (@) --- */
+            function getCaretCoordinates(textarea, selectionEnd) {
+                const mirror = document.createElement('div');
+                const style = window.getComputedStyle(textarea);
+                
+                mirror.style.position = 'absolute';
+                mirror.style.top = '0px';
+                mirror.style.left = '0px';
+                mirror.style.visibility = 'hidden';
+                mirror.style.whiteSpace = 'pre-wrap';
+                mirror.style.wordWrap = 'break-word';
+                mirror.style.width = style.width;
+                mirror.style.fontFamily = style.fontFamily;
+                mirror.style.fontSize = style.fontSize;
+                mirror.style.lineHeight = style.lineHeight;
+                mirror.style.padding = style.padding;
+                mirror.style.border = style.border;
+                mirror.style.boxSizing = style.boxSizing;
+                
+                const textBefore = textarea.value.substring(0, selectionEnd);
+                mirror.appendChild(document.createTextNode(textBefore));
+                
+                const span = document.createElement('span');
+                span.textContent = '|';
+                mirror.appendChild(span);
+                
+                document.body.appendChild(mirror);
+                const coordinates = {
+                    top: span.offsetTop - textarea.scrollTop,
+                    left: span.offsetLeft - textarea.scrollLeft,
+                    height: parseInt(style.lineHeight, 10) || 20
+                };
+                document.body.removeChild(mirror);
+                return coordinates;
+            }
+
+            function checkMentionAutocomplete() {
+                const cursor = panelBodyEditor.selectionEnd;
+                const textBefore = panelBodyEditor.value.substring(0, cursor);
+                const match = textBefore.match(/(?:^|\s|[\(\["'])(@([a-zA-Z0-9\-]*))$/);
+                
+                if (!match) {
+                    closeMentionDropdown();
+                    return;
+                }
+
+                const query = match[2].toLowerCase();
+                mentionMatches = passages.filter(p => 
+                    p.slug.toLowerCase().includes(query) || 
+                    p.title.toLowerCase().includes(query)
+                );
+
+                if (mentionMatches.length === 0) {
+                    closeMentionDropdown();
+                    return;
+                }
+
+                if (mentionSelectedIndex >= mentionMatches.length) {
+                    mentionSelectedIndex = 0;
+                }
+
+                renderMentionDropdown();
+
+                const coords = getCaretCoordinates(panelBodyEditor, cursor);
+                let topPos = coords.top + coords.height + 4;
+                if (topPos + 150 > panelBodyEditor.clientHeight) {
+                    topPos = Math.max(4, coords.top - 150);
+                }
+                mentionDropdown.style.top = topPos + 'px';
+                mentionDropdown.style.left = Math.min(coords.left, panelBodyEditor.clientWidth - 230) + 'px';
+                mentionDropdown.classList.add('open');
+            }
+
+            function renderMentionDropdown() {
+                mentionDropdown.innerHTML = mentionMatches.map((p, idx) => `
+                    <div class="mention-item ${idx === mentionSelectedIndex ? 'selected' : ''}" data-index="${idx}">
+                        <span class="mention-emoji">${p.emoji || '📜'}</span>
+                        <div class="mention-info">
+                            <span class="mention-title">${escapeHtml(p.title)}</span>
+                            <span class="mention-slug">@${escapeHtml(p.slug)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                mentionDropdown.querySelectorAll('.mention-item').forEach(item => {
+                    item.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        const idx = parseInt(item.dataset.index, 10);
+                        if (mentionMatches[idx]) {
+                            selectMention(mentionMatches[idx]);
+                        }
+                    });
+                    item.addEventListener('mouseenter', () => {
+                        mentionSelectedIndex = parseInt(item.dataset.index, 10);
+                        mentionDropdown.querySelectorAll('.mention-item').forEach((el, i) => {
+                            el.classList.toggle('selected', i === mentionSelectedIndex);
+                        });
+                    });
+                });
+
+                const selectedEl = mentionDropdown.querySelector('.mention-item.selected');
+                if (selectedEl) {
+                    selectedEl.scrollIntoView({ block: 'nearest' });
+                }
+            }
+
+            function closeMentionDropdown() {
+                mentionDropdown.classList.remove('open');
+                mentionMatches = [];
+                mentionSelectedIndex = 0;
+            }
+
+            function selectMention(passage) {
+                const cursor = panelBodyEditor.selectionEnd;
+                const textBefore = panelBodyEditor.value.substring(0, cursor);
+                const textAfter = panelBodyEditor.value.substring(cursor);
+                
+                const match = textBefore.match(/(?:^|\s|[\(\["'])(@([a-zA-Z0-9\-]*))$/);
+                if (!match) return;
+
+                const atIndex = textBefore.lastIndexOf('@');
+                const newBefore = textBefore.substring(0, atIndex) + '@' + passage.slug + ' ';
+                
+                panelBodyEditor.value = newBefore + textAfter;
+                panelBodyEditor.selectionStart = panelBodyEditor.selectionEnd = newBefore.length;
+                panelBodyEditor.focus();
+                
+                updatePreview();
+                closeMentionDropdown();
+                showToast(`🔗 Vinculado @${passage.slug}`);
+            }
+
+            panelBodyEditor.addEventListener('input', () => {
+                updatePreview();
+                checkMentionAutocomplete();
+            });
+
+            panelBodyEditor.addEventListener('keyup', (e) => {
+                if (['ArrowLeft', 'ArrowRight', 'Home', 'End', 'Backspace', 'Delete'].includes(e.key)) {
+                    checkMentionAutocomplete();
+                }
+            });
+
+            panelBodyEditor.addEventListener('click', checkMentionAutocomplete);
+            panelBodyEditor.addEventListener('blur', () => setTimeout(closeMentionDropdown, 150));
+
+            panelBodyEditor.addEventListener('keydown', (e) => {
+                if (!mentionDropdown.classList.contains('open')) return;
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    mentionSelectedIndex = (mentionSelectedIndex + 1) % mentionMatches.length;
+                    renderMentionDropdown();
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    mentionSelectedIndex = (mentionSelectedIndex - 1 + mentionMatches.length) % mentionMatches.length;
+                    renderMentionDropdown();
+                } else if (e.key === 'Enter' || e.key === 'Tab') {
+                    if (mentionMatches[mentionSelectedIndex]) {
+                        e.preventDefault();
+                        selectMention(mentionMatches[mentionSelectedIndex]);
+                    }
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeMentionDropdown();
+                }
+            });
+
+            panelSaveBtn.addEventListener('click', () => {
+                const p = passages.find(p => p.id === panelPassageId);
+                if (!p) return;
+                p.title = panelTitleInput.value.trim() || 'Untitled';
+                p.slug = slugify(p.title);
+                p.emoji = panelEmojiSelect.value;
+                p.color = panelColorSelect.value;
+                p.body = panelBodyEditor.value;
+                p.decisions = getDecisionsFromEditor();
+                saveToStorage();
+                closePanel();
+                showToast('✨ Passage Saved');
+            });
+
+            panelDeleteBtn.addEventListener('click', () => {
+                if (confirm('Delete this passage?')) {
+                    passages = passages.filter(p => p.id !== panelPassageId);
+                    passages.forEach(p => {
+                        if (p.decisions) {
+                            p.decisions = p.decisions.filter(d => d.targetId !== panelPassageId);
+                        }
+                    });
+                    saveToStorage();
+                    closePanel();
+                    showToast('🗑️ Passage Deleted');
+                }
+            });
+
+            focusPassageBtn.addEventListener('click', () => centerOnPassage(panelPassageId));
+            panelCloseBtn.addEventListener('click', closePanel);
+            panelOverlay.addEventListener('click', closePanel);
+
+            /* --- PASSAGE & STICKER CREATION --- */
+            function createPassage(title, body, x, y) {
+                const newP = {
+                    id: generateId(),
+                    title: title || 'New Passage',
+                    slug: slugify(title || 'New Passage'),
+                    emoji: '📜',
+                    color: '#634b22',
+                    body: body || '',
+                    x: x !== undefined ? x : 50200 + Math.random() * 200,
+                    y: y !== undefined ? y : 50200 + Math.random() * 200,
+                    decisions: [
+                        { text: 'Proceed', targetId: '' },
+                        { text: 'Turn back', targetId: '' }
+                    ]
+                };
+                passages.push(newP);
+                saveToStorage();
+                renderBoard();
+                return newP;
+            }
+
+            newPassageBtn.addEventListener('click', () => {
+                const rect = boardWrapper.getBoundingClientRect();
+                const x = (rect.width / 2) / scale - panX - 100;
+                const y = (rect.height / 2) / scale - panY - 50;
+                const p = createPassage('New Passage', '', x, y);
+                openPanel(p.id);
+            });
+
+            /* --- PALETTE & STICKERS --- */
+            openPaletteBtn.addEventListener('click', () => paletteDrawer.classList.toggle('open'));
+
+            paletteDrawer.querySelectorAll('.palette-emoji').forEach(el => {
+                el.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', el.textContent);
+                });
+            });
+
+            boardWrapper.addEventListener('dragover', (e) => e.preventDefault());
+            boardWrapper.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const emoji = e.dataTransfer.getData('text/plain');
+                if (emoji) {
+                    const rect = boardContainer.getBoundingClientRect();
+                    stickers.push({
+                        id: generateId(),
+                        emoji: emoji,
+                        x: (e.clientX - rect.left) / scale - 20,
+                        y: (e.clientY - rect.top) / scale - 20
+                    });
+                    saveToStorage();
+                    renderBoard();
+                }
+            });
+
+            /* --- EXPORT MODULES & VISUAL NOVEL ENGINE --- */
+            function downloadFile(content, fileName, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function generatePlayableHtml() {
+                const startPassageId = passages.length > 0 ? passages[0].id : '';
+                return `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythopoeia · Visual Novel</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Cinzel', 'Palatino Linotype', 'Georgia', serif;
+            background: #080706 radial-gradient(circle at 50% 30%, #1a1612 0%, #080706 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #e6d7b8;
+            padding: 1rem;
+        }
+        .vn-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(20, 17, 14, 0.95);
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(212, 175, 55, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+            position: relative;
+        }
+        .vn-header {
+            padding: 1.2rem 2rem;
+            background: linear-gradient(180deg, #1f1a14 0%, #14110e 100%);
+            border-bottom: 1px solid #634b22;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .vn-emoji { font-size: 2rem; }
+        .vn-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            letter-spacing: 0.05em;
+        }
+        .vn-body {
+            padding: 2.5rem 2rem;
+            flex: 1;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #f3e5ab;
+        }
+        .vn-body p { margin-bottom: 1.2rem; }
+        .vn-body strong { color: #ffd700; }
+        .vn-body em { color: #d4af37; font-style: italic; }
+        .vn-decisions {
+            padding: 1.5rem 2rem;
+            background: #0c0a08;
+            border-top: 1px solid #3d2e14;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        .vn-btn {
+            background: #1a1612;
+            border: 1px solid #634b22;
+            color: #ffd700;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .vn-btn:hover {
+            background: linear-gradient(90deg, #2a221b 0%, #1a1612 100%);
+            border-color: #ffd700;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            transform: translateX(5px);
+        }
+        .vn-restart {
+            margin-top: 1rem;
+            background: transparent;
+            border: 1px dashed #5e471f;
+            color: #a38d66;
+            text-align: center;
+            justify-content: center;
+        }
+        .vn-restart:hover {
+            border-color: #ffd700;
+            color: #ffd700;
+            transform: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="vn-container" id="vnContainer"></div>
+    <script>
+        const passages = ${JSON.stringify(passages)};
+        const startId = "${startPassageId}";
+        const container = document.getElementById('vnContainer');
+
+        function renderPassage(id) {
+            const p = passages.find(x => x.id === id) || passages[0];
+            if (!p) {
+                container.innerHTML = '<div class="vn-body"><p>No passages found.</p></div>';
+                return;
+            }
+            let formattedBody = p.body
+                .replace(/@([a-zA-Z0-9\\-]+)/g, (match, slug) => {
+                    const target = passages.find(x => x.slug === slug);
+                    if (target) {
+                        return \`<a href="#" onclick="event.preventDefault(); renderPassage('\${target.id}')" style="color:#ffd700; text-decoration:none; background:#241c12; padding:0.1rem 0.4rem; border-radius:3px; border:1px solid #5e471f;">\${target.emoji || '📜'} @\${slug}</a>\`;
+                    }
+                    return \`<strong style="color:#d4af37;">@\${slug}</strong>\`;
+                })
+                .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')
+                .replace(/\\*(.+?)\\*/g, '<em>$1</em>')
+                .split('\\n\\n').map(para => \`<p>\${para}</p>\`).join('');
+
+            let decisionsHtml = '';
+            if (p.decisions && p.decisions.length > 0) {
+                p.decisions.forEach(d => {
+                    if (d.targetId) {
+                        decisionsHtml += \`<button class="vn-btn" onclick="renderPassage('\${d.targetId}')"><span>⚔️ \${d.text}</span><span>➔</span></button>\`;
+                    }
+                });
+            }
+            if (!decisionsHtml) {
+                decisionsHtml = \`<button class="vn-btn vn-restart" onclick="renderPassage('\${startId}')">↻ Restart Journey</button>\`;
+            }
+
+            container.innerHTML = \`
+                <div class="vn-header" style="border-bottom-color: \${p.color || '#634b22'}">
+                    <span class="vn-emoji">\${p.emoji || '📜'}</span>
+                    <span class="vn-title">\${p.title}</span>
+                </div>
+                <div class="vn-body">\${formattedBody}</div>
+                <div class="vn-decisions">\${decisionsHtml}</div>
+            \`;
+        }
+        renderPassage(startId);
+    <\/script>
+</body>
+</html>`;
+            }
+
+            exportHtmlBtn.addEventListener('click', () => {
+                const htmlContent = generatePlayableHtml();
+                downloadFile(htmlContent, 'mythopoeia_game.html', 'text/html');
+                showToast('🎮 Exported Playable HTML Game');
+            });
+
+            testPlayBtn.addEventListener('click', () => {
+                const htmlContent = generatePlayableHtml();
+                const testWin = window.open('', '_blank', 'width=900,height=700');
+                if (testWin) {
+                    testWin.document.open();
+                    testWin.document.write(htmlContent);
+                    testWin.document.close();
+                    showToast('▶️ Visual Novel Test Started');
+                } else {
+                    showToast('⚠️ Popup blocked! Please allow popups.');
+                }
+            });
+
+            exportMdBtn.addEventListener('click', () => {
+                let md = `# ✦ Mythopoeia Story Export\n\n`;
+                passages.forEach(p => {
+                    md += `## ${p.emoji || ''} ${p.title} <a id="${p.slug}"></a>\n\n`;
+                    md += `${p.body}\n\n`;
+                    if (p.decisions && p.decisions.length > 0) {
+                        md += `**Decisions:**\n`;
+                        p.decisions.forEach(d => {
+                            const target = passages.find(t => t.id === d.targetId);
+                            const link = target ? `[${d.text}](#${target.slug})` : `${d.text} *(End)*`;
+                            md += `- ➔ ${link}\n`;
+                        });
+                        md += `\n`;
+                    }
+                    md += `---\n\n`;
+                });
+                downloadFile(md, 'story_export.md', 'text/markdown');
+                showToast('📜 Exported to Markdown');
+            });
+
+            exportMermaidBtn.addEventListener('click', () => {
+                let m = `graph TD\n`;
+                passages.forEach(p => {
+                    const cleanTitle = p.title.replace(/["']/g, '');
+                    m += `  ${p.id}["${p.emoji || ''} ${cleanTitle}"]\n`;
+                    if (p.decisions) {
+                        p.decisions.forEach(d => {
+                            if (d.targetId) {
+                                const cleanDec = d.text.replace(/["']/g, '');
+                                m += `  ${p.id} -->|"${cleanDec}"| ${d.targetId}\n`;
+                            }
+                        });
+                    }
+                });
+                downloadFile(m, 'story_graph.mermaid', 'text/plain');
+                showToast('🧜‍♂️ Exported Mermaid Diagram');
+            });
+
+            exportPngBtn.addEventListener('click', () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                const minX = Math.min(...passages.map(p => p.x)) - 50;
+                const maxX = Math.max(...passages.map(p => p.x + 240)) + 50;
+                const minY = Math.min(...passages.map(p => p.y)) - 50;
+                const maxY = Math.max(...passages.map(p => p.y + 200)) + 50;
+
+                canvas.width = maxX - minX;
+                canvas.height = maxY - minY;
+
+                ctx.fillStyle = '#080706';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.strokeStyle = '#aa7c11';
+                ctx.lineWidth = 2;
+                passages.forEach(source => {
+                    if (!source.decisions) return;
+                    source.decisions.forEach((dec, idx) => {
+                        const target = passages.find(p => p.id === dec.targetId);
+                        if (!target) return;
+
+                        const x1 = (source.x - minX) + 200;
+                        const y1 = (source.y - minY) + 80 + (idx * 25);
+                        const x2 = target.x - minX;
+                        const y2 = (target.y - minY) + 50;
+
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.bezierCurveTo(x1 + 50, y1, x2 - 50, y2, x2, y2);
+                        ctx.stroke();
+                    });
+                });
+
+                passages.forEach(p => {
+                    const x = p.x - minX;
+                    const y = p.y - minY;
+                    const w = 200;
+                    const h = 100 + (p.decisions ? p.decisions.length * 25 : 0);
+
+                    ctx.fillStyle = '#14110e';
+                    ctx.fillRect(x, y, w, h);
+                    ctx.strokeStyle = p.color || '#634b22';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, w, h);
+
+                    ctx.fillStyle = '#f3e5ab';
+                    ctx.font = 'bold 14px serif';
+                    ctx.fillText(`${p.emoji || ''} ${p.title}`, x + 10, y + 25);
+
+                    ctx.fillStyle = '#a38d66';
+                    ctx.font = '11px sans-serif';
+                    ctx.fillText(p.body.substring(0, 25) + '...', x + 10, y + 50);
+
+                    if (p.decisions) {
+                        ctx.fillStyle = '#d4af37';
+                        p.decisions.forEach((d, i) => {
+                            ctx.fillText(`➔ ${d.text.substring(0, 20)}`, x + 10, y + 80 + (i * 25));
+                        });
+                    }
+                });
+
+                const link = document.createElement('a');
+                link.download = 'mythopoeia_board.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                showToast('🖼️ Board Exported as PNG');
+            });
+
+            /* --- INIT & CONTROLS --- */
+            toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
+            centerBoardBtn.addEventListener('click', centerBoard);
+
+            saveFmmBtn.addEventListener('click', () => {
+                const data = JSON.stringify({ passages, stickers }, null, 2);
+                downloadFile(data, 'project.fmm', 'application/json');
+                showToast('💾 Saved project.fmm');
+            });
+
+            loadFmmBtn.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.passages) {
+                            passages = data.passages;
+                            stickers = data.stickers || [];
+                            saveToStorage();
+                            renderBoard();
+                            centerBoard();
+                            showToast('📂 Project Loaded');
+                        }
+                    } catch(err) { showToast('⚠️ Invalid File'); }
+                };
+                reader.readAsText(file);
+            });
+
+            function init() {
+                if (!loadFromStorage()) initDefaultData();
+                renderBoard();
+                centerBoard();
+            }
+
+            init();
+
+        })();
+    </script>
+</body>
+</html>
