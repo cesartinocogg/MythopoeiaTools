@@ -857,13 +857,18 @@
         });
 
         function validateAndCleanDB(loadedDB) {
-            db = loadedDB;
+            db = loadedDB || {};
             if (!db.worldName) db.worldName = "New Realm";
             if (!db.categories || !db.categories.length) {
                 db.categories = [{ id: "cat_char", name: "Personajes", icon: "👑", color: "#e2b96f" }];
             }
-            if (!db.entries) db.entries = [];
+            
+            if (!db.entries || !Array.isArray(db.entries)) {
+                db.entries = [];
+            }
+            
             db.entries.forEach(e => { if (!e.tags) e.tags = []; if (!e.image) e.image = ""; });
+            
             if (!db.maps || !db.maps.length) {
                 db.maps = [{ id: "map_1", name: "Continente", fondo: null, fabricData: { version: "2.2", viewport: [1, 0, 0, 1, 0, 0], capas: [{ id: "capa_base", nombre: "Capa Base", visible: true }], objetos: [] } }];
             }
@@ -871,8 +876,12 @@
                 if (!m.fabricData) m.fabricData = { version: "2.2", viewport: [1, 0, 0, 1, 0, 0], capas: [{ id: "capa_base", nombre: "Capa Base", visible: true }], objetos: [] };
                 if (!m.fabricData.objetos) m.fabricData.objetos = [];
             });
-            if (!db.canvas) db.canvas = { nodes: [], links: [] };
-            if (!db.timeline) db.timeline = [];
+            
+            if (!db.canvas) db.canvas = {};
+            if (!db.canvas.nodes || !Array.isArray(db.canvas.nodes)) db.canvas.nodes = [];
+            if (!db.canvas.links || !Array.isArray(db.canvas.links)) db.canvas.links = [];
+            
+            if (!db.timeline || !Array.isArray(db.timeline)) db.timeline = [];
         }
 
         function initApp() {
@@ -2142,6 +2151,32 @@
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob); a.download = `${db.worldName.toLowerCase().replace(/\s+/g, '_')}_data.js`; a.click();
         }
+        // SISTEMA DE GUARDADO AUTOMÁTICO DE EMERGENCIA 1 MIN
+setInterval(() => {
+    if (isDirty && db) {
+        try {
+            localStorage.setItem('fwf_autosave_recovery', JSON.stringify(db));
+            console.log("Autoguardado de emergencia realizado.");
+        } catch(e) {
+            console.error("Fallo el autoguardado", e);
+        }
+    }
+}, 60000);
+
+// REVISA
+window.addEventListener("DOMContentLoaded", () => {
+    const recoveryData = localStorage.getItem('fwf_autosave_recovery');
+    if (recoveryData) {
+        if(confirm("Se encontró un progreso sin guardar tras un cierre inesperado. ¿Deseas restaurarlo?")) {
+            db = JSON.parse(recoveryData);
+            validateAndCleanDB(db);
+            initApp();
+        } else {
+            // Si el usuario cancela, limpiamos el recovery
+            localStorage.removeItem('fwf_autosave_recovery');
+        }
+    }
+});
     </script>
 </body>
 </html>
